@@ -1,0 +1,213 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+$LOCK_FILE = "sbtuitestscreencaster.lock"
+
+def handle_pending_processes()
+  begin
+    processes_to_kill = File.readlines($LOCK_FILE) 
+    active_processes_pids = `ps aux | grep -e '\\d ruby ./sbtuitestscreencaster' | awk '{ print $2 }'`.split(/\n/)   
+
+    processes_to_kill.each { |pid|
+      if active_processes_pids.include?(pid.strip) then
+        puts "Killing pending process"
+        Process.kill("KILL", pid.to_i)
+      end 
+    }
+  rescue Exception
+  end
+
+  File.open("sbtuitestscreencaster.lock", "w+") do |f|
+    f.puts(Process.pid.to_s)
+  end
+end
+
+def main()  
+  if ARGV[0] == nil then
+    puts "usage: sbtuitestscreencaster [stop|start deriveddatafolder]"
+    exit(-1)
+  end 
+  command = ARGV[0]
+  if command == "start" then
+    if ARGV[1] == nil then
+      puts "deriveddatafolder missing!"
+      exit(-1)
+    end
+  elsif command == "stop" then
+    sleep(5.0)
+    `killall ffmpeg 2>&1`
+    puts 'stopped.'
+    exit(0)
+  else
+    puts "usage: sbtuitestscreencaster [stop|start deriveddatafolder]"
+    exit(-1)
+  end
+  if count_screens() != 1 then
+    puts 'Script currently supports system with a single screen only'
+    exit(-1)
+  end
+
+  handle_pending_processes()
+
+  `killall ffmpeg 2>&1`
+  # before starting we kill simulator. This way we'll start recording only when tests start
+  `killall XCTRunner 2>&1`
+  `killall "Simulator" 2>&1` 
+
+  # trick: we create a symbolic link to ffmpeg with a different name to avoid that the process gets killed when calling `killall ffmpeg`
+  # we don't want to cancel/abort a reencoding process (which is the one that reecondode the screencast to be QuickTime compatible)
+  `ln -f -s /usr/local/bin/ffmpeg /tmp/reencoder`
+
+  while true
+    sleep(1.0)
+
+    if system("ps cax | grep ' Simulator$'") then
+      File.delete($LOCK_FILE)
+
+      sleep(5.0) # wait a bit for simulator to startup
+
+      bounds = simulator_setoptimalzoom_getbounds().split(/,/)
+
+      scale = (is_retina_display() ? 2 : 1)
+
+      w = bounds[0].to_i * scale
+      h = bounds[1].to_i * scale
+      x = bounds[2].to_i * scale
+      y = bounds[3].to_i * scale
+
+      # height and width should be divisible by 2
+      w += w % 2
+      h += h % 2
+
+      screencast_dest = File.join(ARGV[1], "Logs", "Test")
+      FileUtils.mkdir_p(screencast_dest)
+      screencast_dest = File.join(screencast_dest, "Session.mp4")
+
+      `ffmpeg \
+              -y \
+              -pix_fmt uyvy422 \
+              -thread_queue_size 50 -f avfoundation -framerate 30 -i "#{get_mainscreen_indx()}:none" \
+              -c:v libx264 \
+              -vsync 2 \
+              -preset ultrafast \
+              -filter:v "crop=#{w}:#{h}:#{x}:#{y}" \
+              '#{screencast_dest}' \
+              -nostats`
+
+      sleep(5.0)
+
+      # Now reencode the video so that it can be played back by QuickTime
+      reencoded_dest = screencast_dest.gsub(/\.mp4$/, 'QT.mp4')
+
+      `/tmp/reencoder \
+              -y \
+              -i #{screencast_dest} \
+              -f mp4 -vcodec h264 -preset ultrafast \
+              -pix_fmt yuv420p \
+              #{reencoded_dest} \
+              -nostats; \
+       touch -r #{screencast_dest} #{reencoded_dest}; rm #{screencast_dest}`
+      
+      exit(0)
+    end
+  end
+
+  exit(-1)
+end
+
+def osascript(script)
+  cmd = 'osascript', *script.split(/\n/).map { |line| ['-e', line] }.flatten
+  cmd << "2>&1"
+  iop = IO.popen(cmd)
+
+  return iop.readlines.first
+end
+
+def is_retina_display()
+  return system('system_profiler SPDisplaysDataType | grep Resolution | grep "Retina"')
+end
+
+def get_mainscreen_size()
+  bounds = `osascript -e 'tell application "Finder" to get bounds of window of desktop'`.split(/, /)
+
+  return bounds[2], bounds[3]
+end 
+
+def count_screens()
+  return `ffmpeg -f avfoundation -list_devices true -i "" 2>&1`.scan(/\[\d\] Capture screen \d/).count
+end
+
+def get_mainscreen_indx() 
+  indx = `ffmpeg -f avfoundation -list_devices true -i "" 2>&1`[/(?<=\[)\d(?=\] Capture screen 0)/, 0]
+  if indx == nil then
+    raise 'Failed to get main capture screen index'
+  else
+    return indx.to_i
+  end 
+end
+
+def current_screen_resolution()
+  res = osascript <<-END
+    use framework "CoreGraphics"
+    use scripting additions
+    set sizes to item 1 of \(current application\'s NSScreen\'s mainScreen\'s frame as list\)
+    set resolution to \(width of |size| of sizes & "x" & height of |size| of sizes\) as string
+  END
+
+  return res
+end
+
+def simulator_calculate_optimal_zoom()
+  screen_resolution = current_screen_resolution()
+  simulator_bounds_at_25 = osascript <<-END
+    tell application "Simulator" to activate
+    tell application "System Events" to keystroke "5" using command down
+    tell application "System Events" to tell application process "Simulator"
+      tell window 1
+        get {size, position}
+      end tell
+    end tell
+  END
+
+  h_sim = simulator_bounds_at_25.split(/,/)[1].to_f
+  h_screen = screen_resolution.split(/x/)[1].to_f
+
+  ratio = h_screen / h_sim
+  ratio *= 0.95 # slightly less to account menu bar / dock
+
+  if ratio > 4 then
+    return 1
+  elsif ratio > 3 then
+    return 2
+  elsif ratio > 2 then
+    return 3
+  elsif ratio > 1 then
+    return 4
+  else
+    return 5
+  end    
+end
+
+def simulator_setoptimalzoom_getbounds()
+  simulator_zoom = simulator_calculate_optimal_zoom()
+  simulator_bounds = osascript <<-END
+    tell application "Simulator" to activate
+    tell application "System Events" to keystroke "#{simulator_zoom}" using command down
+    tell application "System Events" to tell application process "Simulator"
+      tell window 1
+        get {size, position}
+      end tell
+    end tell
+  END
+
+  if simulator_bounds == nil then
+    raise "\n\nIf during execution you get an error: 'osascript is not allowed assistive access' update Security & Privacy settings allowing terminal Accessibility in Privacy tab"
+  end
+
+  return simulator_bounds
+end
+
+pid = fork {
+  main()  
+}
