@@ -53,6 +53,10 @@ extension RouteHandler {
         var plists = plistFiles(baseFolderURL, matchSuffix: "_TestSummaries.plist")
         
         plists = plists.filter({ plist in
+            if self.groupedPlists.contains(plist) {
+                return false
+            }
+
             for run in runs {
                 if run.plistURL == plist {
                     return false
@@ -101,6 +105,7 @@ extension RouteHandler {
                             }
                             
                             runsToDelete += runsDroppingFirst
+                            runsToDelete.forEach { self.groupedPlists.insert($0.plistURL) }
                         }
                     }
                     
