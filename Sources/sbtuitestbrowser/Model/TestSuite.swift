@@ -20,7 +20,7 @@ import Foundation
 
 class TestSuite: ListItem, FailableItem, Hashable, Equatable {
     let name: String
-    unowned let parentRun: TestRun
+    unowned var parentRun: TestRun
     
     private(set) var tests = [Test]()
     

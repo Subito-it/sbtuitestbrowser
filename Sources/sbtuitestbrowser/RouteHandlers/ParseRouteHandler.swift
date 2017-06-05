@@ -101,6 +101,8 @@ extension RouteHandler {
                         if runsInSameFolder.count > 1 {
                             let runsDroppingFirst = runsInSameFolder.dropFirst()
                             for runInTheSameFolder in runsDroppingFirst {
+                                runInTheSameFolder.suites.forEach { $0.parentRun = runsInSameFolder.first! }
+                                
                                 runsInSameFolder.first!.add(runInTheSameFolder.suites)
                             }
                             
