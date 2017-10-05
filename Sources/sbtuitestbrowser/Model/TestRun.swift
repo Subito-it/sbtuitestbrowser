@@ -19,7 +19,9 @@
 import Foundation
 
 class TestRun: ListItem, FailableItem {
+    let basePath: String
     let plistURL: URL
+    let screenshotBasePath: String
     let screencastURL: URL?
     var id: String { return plistURL.lastPathComponent }
     
@@ -29,6 +31,14 @@ class TestRun: ListItem, FailableItem {
     init(plistURL: URL) {
         self.plistURL = plistURL
         self.screencastURL = plistURL.deletingLastPathComponent().appendingPathComponent("SessionQT.mp4")
+        
+        // BasePath is used to determine which TestRuns can be grouped together
+        // This occurs when running multiple tests in parallel on the same device
+        let basePath = plistURL.deletingLastPathComponent().absoluteString
+        let basePath4 = plistURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().absoluteString
+        self.basePath = basePath.replacingOccurrences(of: basePath4, with: "")
+        let basePath5 = plistURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().absoluteString
+        self.screenshotBasePath = basePath.replacingOccurrences(of: basePath5, with: "")
         super.init()
         self.parse()
     }
@@ -59,6 +69,14 @@ class TestRun: ListItem, FailableItem {
         }
         
         return ""
+    }
+    
+    public func sortSuites() {
+        self.suites.sort(by: { $0.name < $1.name })
+    }
+    
+    public func canBeGrouped(with testRun: TestRun) -> Bool {
+        return deviceName == testRun.deviceName && basePath == testRun.basePath
     }
     
     public func add(_ suites: [TestSuite]) {
@@ -108,8 +126,8 @@ class TestRun: ListItem, FailableItem {
             fatalError("Unsupported format version, expected 1.2")
         }
         
-        let deviceName = extract(runDestination: dict)
-        let testsDict = extract(testableSummaries: dict)
+        let deviceName = extractSimulatorName(from: dict)
+        let testsDict = extractTestableSummaries(from: dict)
         
         let runSuites = suites(from: testsDict).map {
             suite in
@@ -175,7 +193,7 @@ class TestRun: ListItem, FailableItem {
         return formatVersion
     }
     
-    private func extract(runDestination dict: [String : Any]?) -> String {
+    private func extractSimulatorName(from dict: [String : Any]?) -> String {
         guard let dict = dict?["RunDestination"] as? [String : Any] else {
             fatalError("No RunDestination?")
         }
@@ -188,15 +206,21 @@ class TestRun: ListItem, FailableItem {
         guard let targetSDK = dict["TargetSDK"] as? [String : Any] else {
             fatalError("Unsupported RunDestination format, TargetSDK")
         }
-        
+        guard let modelName = targetDevice["ModelName"] as? String else {
+            fatalError("Unsupported RunDestination format, TargetSDK")
+        }
+        guard let modelVersion = targetDevice["OperatingSystemVersion"] as? String else {
+            fatalError("Unsupported RunDestination format, TargetSDK")
+        }
+
         _ = localComputer["suppresswarning"]
         _ = targetSDK["suppresswarning"]
         
         // for the time being we just extract the device name
-        return targetDevice["Name"] as! String
+        return "\(modelName) (\(modelVersion))"
     }
     
-    private func extract(testableSummaries dict: [String : Any]?) -> [[String : Any]] {
+    private func extractTestableSummaries(from dict: [String : Any]?) -> [[String : Any]] {
         func extract(subTestLeafes dict: [String : Any]?, parent: [String : Any]?) -> [[String : Any]] {
             guard var dict = dict else {
                 return []
@@ -239,7 +263,6 @@ class TestRun: ListItem, FailableItem {
 }
 
 extension Array where Element: TestRun {
-    
     func frequentlyFailingTests(minRunsForFrequentFail: Int) -> [Test] {
         func cleanupName(action: TestAction?) -> String? {
             guard let action = action else {

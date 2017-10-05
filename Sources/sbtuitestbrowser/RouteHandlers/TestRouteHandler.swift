@@ -120,7 +120,7 @@ extension RouteHandler {
                     
                     response.appendBody(string: "<a href='#' onclick='moveVideoCursor(\(actionTimeDelta));return false;' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
                     if let screenshotPath = action.screenshotPath, showScreeshots == true {
-                        response.appendBody(string: "<br /><a href='/static\(basePath)\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static\(basePath)\(screenshotPath)' /></a><br />")
+                        response.appendBody(string: "<br /><a href='/static/\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static/\(screenshotPath)' /></a><br />")
                     }
                 }
             } else {

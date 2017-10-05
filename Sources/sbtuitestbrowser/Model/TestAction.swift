@@ -47,8 +47,10 @@ class TestAction: Hashable, Equatable {
         self.parentAction = parentAction
         self.parentTest = parentTest
         
+        let screenshotBasePath = parentTest.parentSuite.parentRun.screenshotBasePath
+        
         if (dict["HasScreenshotData"] as? Bool) == true {
-            self.screenshotPath = "/Attachments/Screenshot_\(self.uuid).png"
+            self.screenshotPath = "\(screenshotBasePath)Attachments/Screenshot_\(self.uuid).jpg"
         } else {
             self.screenshotPath = nil
         }
@@ -67,5 +69,4 @@ class TestAction: Hashable, Equatable {
     static func ==(lhs: TestAction, rhs: TestAction) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
-    
 }

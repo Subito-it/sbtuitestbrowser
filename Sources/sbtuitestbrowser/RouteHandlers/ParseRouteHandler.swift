@@ -87,9 +87,9 @@ extension RouteHandler {
             self.runSyncQueue.async { [unowned self] in
                 self.runs = lastRuns + r
                 
-                let groupRunsInSameSubfolder = true
+                let groupRuns = true
                 
-                if groupRunsInSameSubfolder {
+                if groupRuns {
                     var runsToDelete = [TestRun]()
                     
                     for run in self.runs {
@@ -97,13 +97,13 @@ extension RouteHandler {
                             continue
                         }
                         
-                        let runsInSameFolder = self.runs.filter { run.plistURL.deletingLastPathComponent() == $0.plistURL.deletingLastPathComponent() }
-                        if runsInSameFolder.count > 1 {
-                            let runsDroppingFirst = runsInSameFolder.dropFirst()
+                        let groupableRuns = self.runs.filter { run.canBeGrouped(with: $0) }
+                        if groupableRuns.count > 1 {
+                            let runsDroppingFirst = groupableRuns.dropFirst()
                             for runInTheSameFolder in runsDroppingFirst {
-                                runInTheSameFolder.suites.forEach { $0.parentRun = runsInSameFolder.first! }
+                                runInTheSameFolder.suites.forEach { $0.parentRun = groupableRuns.first! }
                                 
-                                runsInSameFolder.first!.add(runInTheSameFolder.suites)
+                                groupableRuns.first!.add(runInTheSameFolder.suites)
                             }
                             
                             runsToDelete += runsDroppingFirst
@@ -120,6 +120,9 @@ extension RouteHandler {
                     
                     return lhsStartTime > rhsStartTime
                 })
+                if groupRuns {
+                    self.runs.forEach { $0.sortSuites() }
+                }
                 
                 self.runs.listify()
                 
