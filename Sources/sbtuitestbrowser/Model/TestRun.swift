@@ -28,29 +28,29 @@ class TestRun: ListItem, FailableItem {
     private(set) var deviceName: String = ""
     private(set) var suites = [TestSuite]()
     
-    init(plistURL: URL) {
+    init(plistURL: URL, screenshotBaseURL: URL) {
         self.plistURL = plistURL
         self.screencastURL = plistURL.deletingLastPathComponent().appendingPathComponent("SessionQT.mp4")
         
         // BasePath is used to determine which TestRuns can be grouped together
         // This occurs when running multiple tests in parallel on the same device
-        let basePath = plistURL.deletingLastPathComponent().absoluteString
-        let basePath4 = plistURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().absoluteString
+        let basePath = plistURL.deletingLastPathComponent().path
+        let basePath4 = plistURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().path
         self.basePath = basePath.replacingOccurrences(of: basePath4, with: "")
-        let basePath5 = plistURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().absoluteString
-        self.screenshotBasePath = basePath.replacingOccurrences(of: basePath5, with: "")
+       
+        self.screenshotBasePath = basePath.replacingOccurrences(of: screenshotBaseURL.path, with: "")
         super.init()
         self.parse()
     }
     
-    static func parse(plists: [URL], partialRun: @escaping (TestRun, Double) -> Void ) -> [TestRun] {
+    static func parse(plists: [URL], screenshotBaseURL: URL, partialRun: @escaping (TestRun, Double) -> Void ) -> [TestRun] {
         var runs = [TestRun]()
         
         let synchQueue = DispatchQueue(label: "com.synch.parse")
         // parallel enumeration
         (plists as NSArray).enumerateObjects(options: .concurrent, using: { (obj, idx, stop) -> Void in
             autoreleasepool {
-                let run = TestRun(plistURL: obj as! URL)
+                let run = TestRun(plistURL: obj as! URL, screenshotBaseURL: screenshotBaseURL)
                 
                 synchQueue.async {
                     runs.append(run)

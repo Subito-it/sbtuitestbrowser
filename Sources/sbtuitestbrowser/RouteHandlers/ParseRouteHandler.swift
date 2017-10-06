@@ -75,7 +75,7 @@ extension RouteHandler {
                 fileManager.fileExists(atPath: $0.plistURL.path)
             }
             
-            let r = TestRun.parse(plists: plists) {
+            let r = TestRun.parse(plists: plists, screenshotBaseURL: baseFolderURL) {
                 partialResult, progress in
                 
                 self.runSyncQueue.async { [unowned self] in

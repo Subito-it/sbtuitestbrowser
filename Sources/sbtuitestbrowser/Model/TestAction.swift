@@ -50,7 +50,7 @@ class TestAction: Hashable, Equatable {
         let screenshotBasePath = parentTest.parentSuite.parentRun.screenshotBasePath
         
         if (dict["HasScreenshotData"] as? Bool) == true {
-            self.screenshotPath = "\(screenshotBasePath)Attachments/Screenshot_\(self.uuid).jpg"
+            self.screenshotPath = "\(screenshotBasePath)/Attachments/Screenshot_\(self.uuid).jpg"
         } else {
             self.screenshotPath = nil
         }
