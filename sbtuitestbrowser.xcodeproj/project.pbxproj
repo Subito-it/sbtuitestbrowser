@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */; };
+		C3E252A21FD830E20097CF97 /* LastResultRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */; };
 		OBJ_1000 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* inffast.c */; };
 		OBJ_1001 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_48 /* inflate.c */; };
 		OBJ_1002 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_49 /* inftrees.c */; };
@@ -1119,6 +1121,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRouteHandler.swift; sourceTree = "<group>"; };
+		C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LastResultRouteHandler.swift; sourceTree = "<group>"; };
 		"COpenSSL::COpenSSL::Product" /* COpenSSL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = COpenSSL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
 		OBJ_100 /* NetEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetEvent.swift; sourceTree = "<group>"; };
@@ -2767,9 +2771,11 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_24 /* HomeRouteHandler.swift */,
+				C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */,
 				OBJ_25 /* ParseRouteHandler.swift */,
 				OBJ_26 /* RouteHandler.swift */,
 				OBJ_27 /* RunRouteHandler.swift */,
+				C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */,
 				OBJ_28 /* SuiteRouteHandler.swift */,
 				OBJ_29 /* TestRouteHandler.swift */,
 			);
@@ -4249,10 +4255,12 @@
 				OBJ_888 /* HTMLHelpers.swift in Sources */,
 				OBJ_889 /* Model.swift in Sources */,
 				OBJ_890 /* Test.swift in Sources */,
+				C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */,
 				OBJ_891 /* TestAction.swift in Sources */,
 				OBJ_892 /* TestFailure.swift in Sources */,
 				OBJ_893 /* TestRun.swift in Sources */,
 				OBJ_894 /* TestSuite.swift in Sources */,
+				C3E252A21FD830E20097CF97 /* LastResultRouteHandler.swift in Sources */,
 				OBJ_895 /* HomeRouteHandler.swift in Sources */,
 				OBJ_896 /* ParseRouteHandler.swift in Sources */,
 				OBJ_897 /* RouteHandler.swift in Sources */,
