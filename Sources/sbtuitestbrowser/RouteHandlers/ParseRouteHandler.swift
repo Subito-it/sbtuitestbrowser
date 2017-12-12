@@ -149,7 +149,7 @@ extension RouteHandler {
         })
         
         var plistToProcess = [URL]()
-        let foldersToSkip = ["ModuleCache", "Build", "Attachments"]
+        let foldersToSkip = ["DataStore", "ModuleCache", "Build", "Attachments"]
         while let file = enumerator?.nextObject() as? URL {
             if #available(OSX 10.11, *) {
                 if file.hasDirectoryPath && foldersToSkip.contains(file.lastPathComponent) {
