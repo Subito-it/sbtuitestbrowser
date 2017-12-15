@@ -75,6 +75,21 @@ class TestRun: ListItem, FailableItem {
         self.suites.sort(by: { $0.name < $1.name })
     }
     
+    public func groupSuites() {
+        sortSuites()
+        
+        var lastSuite = self.suites.last
+        for (indx, suite) in self.suites.dropLast().enumerated().reversed() {
+            if suite.name == lastSuite?.name ?? "" {
+                lastSuite?.add(suite.tests)
+                
+                self.suites.remove(at: indx)
+            } else {
+                lastSuite = suite
+            }
+        }
+    }
+    
     public func canBeGrouped(with testRun: TestRun) -> Bool {
         return deviceName == testRun.deviceName && basePath == testRun.basePath
     }

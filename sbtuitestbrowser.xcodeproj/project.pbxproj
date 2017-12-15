@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C392C1311FE3C22D002DAF3E /* TestStatsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */; };
 		C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */; };
 		C3E252A21FD830E20097CF97 /* LastResultRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */; };
 		OBJ_1000 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_47 /* inffast.c */; };
@@ -1121,6 +1122,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestStatsRouteHandler.swift; sourceTree = "<group>"; };
 		C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRouteHandler.swift; sourceTree = "<group>"; };
 		C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LastResultRouteHandler.swift; sourceTree = "<group>"; };
 		"COpenSSL::COpenSSL::Product" /* COpenSSL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = COpenSSL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2778,6 +2780,7 @@
 				C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */,
 				OBJ_28 /* SuiteRouteHandler.swift */,
 				OBJ_29 /* TestRouteHandler.swift */,
+				C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */,
 			);
 			path = RouteHandlers;
 			sourceTree = "<group>";
@@ -4261,6 +4264,7 @@
 				OBJ_893 /* TestRun.swift in Sources */,
 				OBJ_894 /* TestSuite.swift in Sources */,
 				C3E252A21FD830E20097CF97 /* LastResultRouteHandler.swift in Sources */,
+				C392C1311FE3C22D002DAF3E /* TestStatsRouteHandler.swift in Sources */,
 				OBJ_895 /* HomeRouteHandler.swift in Sources */,
 				OBJ_896 /* ParseRouteHandler.swift in Sources */,
 				OBJ_897 /* RouteHandler.swift in Sources */,

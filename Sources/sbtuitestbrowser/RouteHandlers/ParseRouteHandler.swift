@@ -121,7 +121,7 @@ extension RouteHandler {
                     return lhsStartTime > rhsStartTime
                 })
                 if groupRuns {
-                    self.runs.forEach { $0.sortSuites() }
+                    self.runs.forEach { $0.groupSuites() }
                 }
                 
                 self.runs.listify()
