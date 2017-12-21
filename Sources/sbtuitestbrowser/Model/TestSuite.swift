@@ -32,7 +32,7 @@ class TestSuite: ListItem, FailableItem, Hashable, Equatable {
     public func add(_ tests: [Test]) {
         var mTests = self.tests + tests
         
-        mTests.sort(by: { return $0.actions.first?.startTimeinterval ?? 0 < $1.actions.first?.startTimeinterval ?? 0 })
+        mTests.sort(by: { return ($0.actions.first?.startTimeinterval ?? 0) < ($1.actions.first?.startTimeinterval ?? 0) })
         mTests.listify()
         
         self.tests = mTests
@@ -55,6 +55,10 @@ class TestSuite: ListItem, FailableItem, Hashable, Equatable {
     }
     
     public func startTimeInterval() -> TimeInterval {
+        guard tests.count > 0 else {
+            return parentRun.createdDate()?.timeIntervalSinceReferenceDate ?? Date().timeIntervalSinceReferenceDate
+        }
+        
         var sti = Double.greatestFiniteMagnitude
         for test in tests {
             if test.startTimeinterval > 0 {

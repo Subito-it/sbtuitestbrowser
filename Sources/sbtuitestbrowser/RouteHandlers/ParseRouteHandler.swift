@@ -114,12 +114,7 @@ extension RouteHandler {
                     self.runs = self.runs.filter { !runsToDelete.map({ $0.plistURL }).contains($0.plistURL) }
                 }
                 
-                self.runs.sort(by: { lhs, rhs in
-                    let lhsStartTime = lhs.suites.reduce(Double.greatestFiniteMagnitude, { min($0, $1.startTimeInterval()) })
-                    let rhsStartTime = rhs.suites.reduce(Double.greatestFiniteMagnitude, { min($0, $1.startTimeInterval()) })
-                    
-                    return lhsStartTime > rhsStartTime
-                })
+                self.runs.sort(by: { lhs, rhs in lhs.startTimeInterval() > rhs.startTimeInterval() })
                 if groupRuns {
                     self.runs.forEach { $0.groupSuites() }
                 }

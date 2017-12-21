@@ -44,7 +44,7 @@ extension RouteHandler {
             
             let queryParameters = paramDict.queryString()
             for run in self.runs {
-                let hasFailedTest = run.suites.reduce(false) { $0 || $1.hasFailure() }
+                let hasFailedTest = (run.suites.reduce(false) { $0 || $1.hasFailure() }) || (run.totalTests(errorsOnly: false) == 0)
                 let color = hasFailedTest ? "red" : "green"
                 
                 let totalTests = run.totalTests(errorsOnly: showErrorsOnly)

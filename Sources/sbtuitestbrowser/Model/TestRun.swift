@@ -62,9 +62,14 @@ class TestRun: ListItem, FailableItem {
         return runs
     }
     
-    public func createdString() -> String {
+    public func createdDate() -> Date? {
         let attr = try? FileManager.default.attributesOfItem(atPath: plistURL.path)
-        if let date = attr?[FileAttributeKey.modificationDate] as? Date {
+        
+        return attr?[FileAttributeKey.modificationDate] as? Date
+    }
+    
+    public func createdString() -> String {
+        if let date = createdDate() {
             return DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .short)
         }
         
@@ -97,7 +102,7 @@ class TestRun: ListItem, FailableItem {
     public func add(_ suites: [TestSuite]) {
         var mSuites = self.suites + suites
         
-        mSuites.sort(by: { $0.tests.first?.startTimeinterval ?? 0 < $1.tests.first?.startTimeinterval ?? 0 })
+        mSuites.sort(by: { $0.startTimeInterval() < $1.startTimeInterval() })
         mSuites.listify()
         
         self.suites = mSuites
@@ -118,6 +123,17 @@ class TestRun: ListItem, FailableItem {
     public func totalDuration() -> TimeInterval {
         return suites.reduce(0) { $0 + $1.totalDuration() }
     }
+    
+    public func startTimeInterval() -> TimeInterval {
+        var sti = Double.greatestFiniteMagnitude
+        
+        if totalTests(errorsOnly: false) == 0 {
+            return createdDate()?.timeIntervalSinceReferenceDate ?? Date().timeIntervalSinceReferenceDate
+        }
+
+        return suites.reduce(Double.greatestFiniteMagnitude, { min($0, $1.startTimeInterval()) })
+    }
+
     
     public func suite(named: String) -> TestSuite? {
         return suites.first(where: { $0.name == named})
