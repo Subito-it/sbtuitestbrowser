@@ -21,7 +21,7 @@ import PerfectHTTP
 
 extension HTTPResponse {
     
-    func wrapDefaultFont(block: (Void) -> ()) {
+    func wrapDefaultFont(block: () -> Void) {
         appendBody(string: "<div style='font-family: Menlo; font-size: 12px;'>")
         block()
         appendBody(string: "</div>")

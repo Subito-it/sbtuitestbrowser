@@ -55,7 +55,7 @@ class TestAction: Hashable, Equatable {
             self.screenshotPath = nil
         }
         
-        self.failed = self.parentTest.failures.filter({ actionName.contains($0.message) && actionName.contains(":\($0.lineNumber)") && actionName.contains($0.fileName.characters.count > 0 ? $0.fileName : " ") }).count > 0
+        self.failed = self.parentTest.failures.filter({ actionName.contains($0.message) && actionName.contains(":\($0.lineNumber)") && actionName.contains($0.fileName.count > 0 ? $0.fileName : " ") }).count > 0
     }
     
     public func add(_ subAction: TestAction) {

@@ -125,8 +125,6 @@ class TestRun: ListItem, FailableItem {
     }
     
     public func startTimeInterval() -> TimeInterval {
-        var sti = Double.greatestFiniteMagnitude
-        
         if totalTests(errorsOnly: false) == 0 {
             return createdDate()?.timeIntervalSinceReferenceDate ?? Date().timeIntervalSinceReferenceDate
         }
@@ -301,7 +299,7 @@ extension Array where Element: TestRun {
             }
             let actionName = action.name
             let regex = try? NSRegularExpression(pattern: "<XC.*>", options: .caseInsensitive)
-            let range = NSMakeRange(0, actionName.characters.count)
+            let range = NSMakeRange(0, actionName.count)
             
             return regex?.stringByReplacingMatches(in: actionName, options: [], range: range, withTemplate: "")
         }
