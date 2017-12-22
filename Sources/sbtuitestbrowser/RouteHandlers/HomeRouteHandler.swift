@@ -24,7 +24,11 @@ extension RouteHandler {
     public func homeHandler(request: HTTPRequest, _ response: HTTPResponse) {
         let minRunsForFrequentFail = 3
         
-        response.wrapDefaultFont {
+        response.wrapDefaultFont { [weak self] in
+            guard let `self` = self else {
+                return
+            }
+            
             let showErrorsOnly = request.paramBoolValue(name: "errors_only")
             let showErrorsDetails = request.paramBoolValue(name: "errors_details")
             

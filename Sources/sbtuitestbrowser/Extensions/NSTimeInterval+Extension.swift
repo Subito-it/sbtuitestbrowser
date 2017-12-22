@@ -23,7 +23,7 @@ extension TimeInterval {
         if h > 0 {
             ret += "<font color=\"#f02e0f\">\(h)h</font> "
         }
-        if m > 0 || ret.characters.count > 0 {
+        if m > 0 || ret.count > 0 {
             ret += "<font color=\"#ff772c\">\(m)m</font> "
         }
         ret += "<font color=\"#ffbb44\">\(s)s</font>"

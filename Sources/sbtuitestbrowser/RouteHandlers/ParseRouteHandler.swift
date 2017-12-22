@@ -22,11 +22,11 @@ import PerfectHTTP
 extension RouteHandler {
     
     public func parseHandler(request: HTTPRequest, _ response: HTTPResponse) {
-        response.wrapDefaultFont() { [unowned self] in
+        response.wrapDefaultFont() {  [weak self] in
             response.appendBody(string: "<a href='/'>Home</a>")
             response.appendBody(string: "<hr />")
             
-            if self.parsingProgress < 1.0 {
+            if (self?.parsingProgress ?? 0.0) < 1.0 {
                 response.appendBody(string: "Parsing is already in progress")
             } else {
                 response.appendBody(string: "Started parsing")
@@ -78,13 +78,17 @@ extension RouteHandler {
             let r = TestRun.parse(plists: plists, screenshotBaseURL: baseFolderURL) {
                 partialResult, progress in
                 
-                self.runSyncQueue.async { [unowned self] in
-                    self.runs.append(partialResult)
-                    self.parsingProgress = progress
+                self.runSyncQueue.async { [weak self] in
+                    self?.runs.append(partialResult)
+                    self?.parsingProgress = progress
                 }
             }
             
-            self.runSyncQueue.async { [unowned self] in
+            self.runSyncQueue.async { [weak self] in
+                guard let `self` = self else {
+                    return
+                }
+                
                 self.runs = lastRuns + r
                 
                 let groupRuns = true
