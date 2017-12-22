@@ -61,7 +61,8 @@ extension RouteHandler {
                 }
             }
             
-            if self.parsingProgress == 1.0 {
+            // disable frequently failing which are crashing
+            if self.parsingProgress == 1.0 && true == false {
                 response.appendBody(string: "<br /><br />")
                 response.appendBody(string: "<hr />")
                 
