@@ -56,7 +56,7 @@ extension RouteHandler {
             if self.groupedPlists.contains(plist) {
                 return false
             }
-
+            
             for run in runs {
                 if run.plistURL == plist {
                     return false
@@ -124,6 +124,21 @@ extension RouteHandler {
                 }
                 
                 self.runs.listify()
+                
+                // Integrity check
+                for run in self.runs {
+                    for suite in run.suites {
+                        if suite.parentRun != run {
+                            fatalError("Wrong parentRun in \(run)")
+                        }
+                        
+                        for test in suite.tests {
+                            if test.parentSuite != suite {
+                                fatalError("Wrong parentSuite")
+                            }
+                        }
+                    }
+                }
                 
                 self.parsingProgress = 1.0
             }

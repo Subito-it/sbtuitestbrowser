@@ -23,7 +23,7 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     let startTimeinterval: TimeInterval
     let stopTimeinterval: TimeInterval
     let duration: TimeInterval
-    unowned let parentSuite: TestSuite
+    unowned var parentSuite: TestSuite
     let failures: [TestFailure]
 
     private(set) var actions = [TestAction]()

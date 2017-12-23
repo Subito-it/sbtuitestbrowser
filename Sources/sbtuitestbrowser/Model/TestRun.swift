@@ -18,7 +18,7 @@
 
 import Foundation
 
-class TestRun: ListItem, FailableItem {
+class TestRun: ListItem, FailableItem, Equatable {
     let basePath: String
     let plistURL: URL
     let screenshotBasePath: String
@@ -83,10 +83,20 @@ class TestRun: ListItem, FailableItem {
     public func groupSuites() {
         sortSuites()
         
-        var lastSuite = self.suites.last
+        // Update parentRun
+        for suite in self.suites {
+            suite.parentRun = self
+        }
+        
+        guard var lastSuite = self.suites.last else {
+            return
+        }
         for (indx, suite) in self.suites.dropLast().enumerated().reversed() {
-            if suite.name == lastSuite?.name ?? "" {
-                lastSuite?.add(suite.tests)
+            if suite.name == lastSuite.name {
+                for test in suite.tests {
+                    test.parentSuite = lastSuite
+                }
+                lastSuite.add(suite.tests)
                 
                 self.suites.remove(at: indx)
             } else {
@@ -288,6 +298,12 @@ class TestRun: ListItem, FailableItem {
     
     func hasFailure() -> Bool {
         return suites.reduce(false) { $0 || $1.hasFailure() }
+    }
+    
+    var hashValue: Int { return plistURL.hashValue }
+    
+    static func ==(lhs: TestRun, rhs: TestRun) -> Bool {
+        return lhs.hashValue == rhs.hashValue
     }
 }
 
