@@ -69,6 +69,21 @@ class TestSuite: ListItem, FailableItem, Hashable, Equatable {
         return sti
     }
     
+    public func stopTimeInterval() -> TimeInterval {
+        guard tests.count > 0 else {
+            return parentRun.createdDate()?.timeIntervalSinceReferenceDate ?? Date().timeIntervalSinceReferenceDate
+        }
+        
+        var sti = 0.0
+        for test in tests {
+            if test.startTimeinterval > 0 {
+                sti = max(sti, test.stopTimeinterval)
+            }
+        }
+        
+        return sti
+    }
+    
     public func totalDuration() -> TimeInterval {
         return tests.reduce(0.0, { $0 + $1.duration })        
     }

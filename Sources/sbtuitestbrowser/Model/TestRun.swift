@@ -142,6 +142,13 @@ class TestRun: ListItem, FailableItem, Equatable {
         return suites.reduce(Double.greatestFiniteMagnitude, { min($0, $1.startTimeInterval()) })
     }
 
+    public func stopTimeInterval() -> TimeInterval {
+        if totalTests(errorsOnly: false) == 0 {
+            return createdDate()?.timeIntervalSinceReferenceDate ?? Date().timeIntervalSinceReferenceDate
+        }
+        
+        return suites.reduce(0.0, { max($0, $1.stopTimeInterval()) })
+    }
     
     public func suite(named: String) -> TestSuite? {
         return suites.first(where: { $0.name == named})
