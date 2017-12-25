@@ -23,6 +23,11 @@ extension RouteHandler {
     
     public func resetHandler(request: HTTPRequest, _ response: HTTPResponse) {
         self.runs = []
+        self.groupedPlists = Set<URL>()
         parseAll()
+        
+        response.status = .movedPermanently
+        response.setHeader(.location, value: "/")
+        response.completed()
     }
 }
