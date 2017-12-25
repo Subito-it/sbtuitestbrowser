@@ -44,6 +44,7 @@ var routeHandler = RouteHandler(baseFolderURL: baseFolderURL)
 routeHandler.parseAll()
 
 routes.add(method: .get, uri: "/", handler: routeHandler.homeHandler)
+routes.add(method: .get, uri: "/reset", handler: routeHandler.resetHandler)
 routes.add(method: .get, uri: "/teststats", handler: routeHandler.testStatsHandler)
 routes.add(method: .get, uri: "/status", handler: routeHandler.statusHandler)
 routes.add(method: .get, uri: "/lastresult", handler: routeHandler.lastResultHandler)

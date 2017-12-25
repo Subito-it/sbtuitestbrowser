@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C3881A991FF164B500EB6579 /* ResetRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3881A981FF164B500EB6579 /* ResetRouteHandler.swift */; };
 		C392C1311FE3C22D002DAF3E /* TestStatsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */; };
 		C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */; };
 		C3E252A21FD830E20097CF97 /* LastResultRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */; };
@@ -1122,6 +1123,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C3881A981FF164B500EB6579 /* ResetRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetRouteHandler.swift; sourceTree = "<group>"; };
 		C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestStatsRouteHandler.swift; sourceTree = "<group>"; };
 		C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRouteHandler.swift; sourceTree = "<group>"; };
 		C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LastResultRouteHandler.swift; sourceTree = "<group>"; };
@@ -2775,6 +2777,7 @@
 				OBJ_24 /* HomeRouteHandler.swift */,
 				C3E252A11FD830E10097CF97 /* LastResultRouteHandler.swift */,
 				OBJ_25 /* ParseRouteHandler.swift */,
+				C3881A981FF164B500EB6579 /* ResetRouteHandler.swift */,
 				OBJ_26 /* RouteHandler.swift */,
 				OBJ_27 /* RunRouteHandler.swift */,
 				C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */,
@@ -4259,6 +4262,7 @@
 				OBJ_889 /* Model.swift in Sources */,
 				OBJ_890 /* Test.swift in Sources */,
 				C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */,
+				C3881A991FF164B500EB6579 /* ResetRouteHandler.swift in Sources */,
 				OBJ_891 /* TestAction.swift in Sources */,
 				OBJ_892 /* TestFailure.swift in Sources */,
 				OBJ_893 /* TestRun.swift in Sources */,
