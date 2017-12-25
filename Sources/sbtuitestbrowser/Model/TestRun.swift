@@ -134,6 +134,10 @@ class TestRun: ListItem, FailableItem, Equatable {
         return suites.reduce(0) { $0 + $1.totalDuration() }
     }
     
+    public func totalElapsedDuration() -> TimeInterval {
+        return stopTimeInterval() - startTimeInterval()
+    }
+    
     public func startTimeInterval() -> TimeInterval {
         if totalTests(errorsOnly: false) == 0 {
             return createdDate()?.timeIntervalSinceReferenceDate ?? Date().timeIntervalSinceReferenceDate
