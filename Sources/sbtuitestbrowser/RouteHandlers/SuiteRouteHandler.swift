@@ -1,5 +1,5 @@
 //
-// SuiteRoute.swift
+// SuiteRouteHandler.swift
 //
 // Copyright (C) 2016 Subito.it S.r.l (www.subito.it)
 //
