@@ -103,6 +103,8 @@ class TestRun: ListItem, FailableItem, Equatable {
                 lastSuite = suite
             }
         }
+        
+        self.suites.listify()
     }
     
     public func canBeGrouped(with testRun: TestRun) -> Bool {
