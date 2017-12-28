@@ -112,7 +112,7 @@ class TestRun: ListItem, FailableItem, Equatable {
     public func add(_ suites: [TestSuite]) {
         var mSuites = self.suites + suites
         
-        mSuites.sort(by: { $0.startTimeInterval() < $1.startTimeInterval() })
+        mSuites.sort(by: { $0.name < $1.name })
         mSuites.listify()
         
         self.suites = mSuites

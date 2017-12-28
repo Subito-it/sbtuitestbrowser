@@ -32,7 +32,7 @@ class TestSuite: ListItem, FailableItem, Hashable, Equatable {
     public func add(_ tests: [Test]) {
         var mTests = self.tests + tests
         
-        mTests.sort(by: { return ($0.actions.first?.startTimeinterval ?? 0) < ($1.actions.first?.startTimeinterval ?? 0) })
+        mTests.sort(by: { return $0.name < $1.name })
         mTests.listify()
         
         self.tests = mTests
