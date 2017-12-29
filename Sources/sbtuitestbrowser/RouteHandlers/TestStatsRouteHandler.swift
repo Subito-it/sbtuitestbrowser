@@ -30,7 +30,7 @@ extension RouteHandler {
             let testName = testIdComponents[1].replacingOccurrences(of: "()", with: "") + "()"
             
             var matchingTests = [Test]()
-            for run in self.runs.prefix(5) {
+            for run in self.runs {
                 guard let test = run.suite(named: suiteName)?.test(named: testName) else {
                     continue
                 }
