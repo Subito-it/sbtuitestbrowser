@@ -27,15 +27,12 @@ extension RouteHandler {
         let testName = request.urlVariables["testname"] ?? ""
 
         guard let run = self.runs.first(where: { $0.id == runPlist }),
-            let baseFolderPath = self.baseFolderURL?.path,
             let suite = run.suites.first(where: { $0.name == suiteName }),
             let test = suite.test(named: testName) else {
                 response.appendBody(string: h3("Error! TestRoute #1"))
                 response.completed()
                 return
         }
-        
-        let basePath = run.plistURL.deletingLastPathComponent().path.replacingOccurrences(of: baseFolderPath, with: "")
         
         response.wrapDefaultFont() {
             let showErrorsOnly = request.paramBoolValue(name: "errors_only")
@@ -65,7 +62,6 @@ extension RouteHandler {
             }
             response.appendBody(string: "</h3>")
             
-            let startInterval = test.actions.first?.startTimeinterval ?? 0.0
             var lastParentAction: TestAction? = nil
             var paddingLeft = 0
 
@@ -83,8 +79,6 @@ extension RouteHandler {
                     }
                     
                     let durationString = action.duration >= 0.01 ? "\(String(format: " %.2f", action.duration))s" : ""
-                    
-                    let actionTimeDelta = action.startTimeinterval - startInterval
                     
                     response.appendBody(string: "<a href='/details/\(run.id)/\(suiteName)/\(test.name)/\(action.uuid)' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
                     
