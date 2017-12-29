@@ -21,14 +21,6 @@ import PerfectHTTP
 
 extension RouteHandler {
     
-    private static let screencastDateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        df.timeZone = TimeZone.current
-        
-        return df
-    }()
-    
     public func testHandler(request: HTTPRequest, _ response: HTTPResponse) {
         let runPlist = request.urlVariables["runplist"] ?? ""
         let suiteName = request.urlVariables["suitename"] ?? ""
@@ -51,7 +43,8 @@ extension RouteHandler {
             
             let paramDict = request.queryParamsDict
             let queryParametersWithToggledScreenshots = paramDict.toggle(key: "screenshots").queryString()
-            let screenshotLink = "<a href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)'>\(showScreeshots ? "Hide screenshots" : "Show screenshots")</a>"
+            
+            let screenshotLink = test.hasScreenshots() ? "<a href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)'>\(showScreeshots ? "Hide screenshots" : "Show screenshots")</a>" : "&nbsp;"
             
             let queryParameters = paramDict.queryString()
             response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.id)</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a>",
@@ -72,36 +65,11 @@ extension RouteHandler {
             }
             response.appendBody(string: "</h3>")
             
-            let hasActions = test.actions.count > 0
-            
-            // Screencast
-            if let screencastURL = run.screencastURL, FileManager.default.fileExists(atPath: screencastURL.path), hasActions {
-                guard let testStartDateString = test.actions.first?.name.replacingOccurrences(of: "Start Test at ", with: "") else { // lame
-                    return
-                }
-                
-                guard let testStartTimestamp = RouteHandler.screencastDateFormatter.date(from: testStartDateString)?.timeIntervalSince1970,
-                    let attr = try? FileManager.default.attributesOfItem(atPath: screencastURL.path),
-                    let screenCastStartDate = attr[FileAttributeKey.creationDate] as? Date else {
-                        return
-                }
-                
-                let deltaEnd = screenCastStartDate.timeIntervalSince1970 - testStartTimestamp
-                
-                // Screencast link
-                response.appendBody(string: "<video id='screencast' width='100%' height='360' controls='true' type='video/mp4'>")
-                response.appendBody(string: "<source src='/static\(basePath)/\(screencastURL.lastPathComponent)' type='video/mp4'><!-- Safari / iPhone video    --></source>")
-                response.appendBody(string: "</video><br /><br />")
-                response.appendBody(string: "<script type='text/javascript'>")
-                response.appendBody(string: "function moveVideoCursor(pos) { var video = document.getElementById('screencast'); video.currentTime = video.duration - \(deltaEnd) + pos; }")
-                response.appendBody(string: "document.getElementById('screencast').addEventListener('loadedmetadata', function() { moveVideoCursor(0); }, false);")
-                response.appendBody(string: "</script>")
-            }
-            
             let startInterval = test.actions.first?.startTimeinterval ?? 0.0
             var lastParentAction: TestAction? = nil
             var paddingLeft = 0
-            
+
+            let hasActions = test.actions.count > 0
             if hasActions {
                 for action in test.actions {
                     let color = action.failed ? "red" : "green"
@@ -118,7 +86,8 @@ extension RouteHandler {
                     
                     let actionTimeDelta = action.startTimeinterval - startInterval
                     
-                    response.appendBody(string: "<a href='#' onclick='moveVideoCursor(\(actionTimeDelta));return false;' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
+                    response.appendBody(string: "<a href='/details/\(run.id)/\(suiteName)/\(test.name)/\(action.uuid)' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
+                    
                     if let screenshotPath = action.screenshotPath, showScreeshots == true {
                         response.appendBody(string: "<br /><a href='/static\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static\(screenshotPath)' /></a><br />")
                     }

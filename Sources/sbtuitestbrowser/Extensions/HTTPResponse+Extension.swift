@@ -22,10 +22,12 @@ import PerfectHTTP
 extension HTTPResponse {
     
     func wrapDefaultFont(block: () -> Void) {
+        appendBody(string: "<html><meta charset='utf-8' /><body>")
         appendBody(string: "<div style='font-family: Menlo; font-size: 12px;'>")
         block()
         appendBody(string: "</div>")
         appendBody(string: "<br /><br />")
+        appendBody(string: "</body></html>")
     }
 
     func threeColumnsBody(leftColumnLink: String?, centerColumn: String, rightColumnLink: String?) {

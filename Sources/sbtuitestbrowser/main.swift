@@ -52,6 +52,7 @@ routes.add(method: .get, uri: "/parse", handler: routeHandler.parseHandler)
 routes.add(method: .get, uri: "/details/{runplist}", handler: routeHandler.runHandler)
 routes.add(method: .get, uri: "/details/{runplist}/{suitename}", handler: routeHandler.suiteHandler)
 routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}", handler: routeHandler.testHandler)
+routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}/{actionuuid}", handler: routeHandler.testActionHandler)
 
 routes.add(method: .get, uri: "/static/**", handler: {
     request, response in

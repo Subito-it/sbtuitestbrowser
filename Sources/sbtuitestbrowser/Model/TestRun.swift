@@ -22,7 +22,6 @@ class TestRun: ListItem, FailableItem, Equatable {
     let basePath: String
     let plistURL: URL
     let screenshotBasePath: String
-    let screencastURL: URL?
     var id: String { return plistURL.lastPathComponent }
     
     private(set) var deviceName: String = ""
@@ -30,7 +29,6 @@ class TestRun: ListItem, FailableItem, Equatable {
     
     init(plistURL: URL, screenshotBaseURL: URL) {
         self.plistURL = plistURL
-        self.screencastURL = plistURL.deletingLastPathComponent().appendingPathComponent("SessionQT.mp4")
         
         // BasePath is used to determine which TestRuns can be grouped together
         // This occurs when running multiple tests in parallel on the same device

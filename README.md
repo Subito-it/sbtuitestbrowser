@@ -41,42 +41,6 @@ The following command will launch your tests on an iPhone 6s simulator storing t
       -derivedDataPath ~/Desktop/iPhone_6s-$(date +%s) \
       test
 
-## Advanced - Screencasting with sbtuitestscreencaster
-> for implementation simplicity the screencaster will work only on a single monitor machine
-
-xcodebuild will by default take a screenshot of every key step in the test execution, and sbtuitestbrowser will show them in the test detail page. Most of the times this works fine however we believe that a video can help even more by providing a context of what happened before and after the test failed. We developed an additional tool, `sbtuitestscreencaster`, that makes recording your simulator ui tests session as simple as it can get.
-
-To use the screencaster you'll need to:
-
-1. Install ffmpeg: `brew install ffmpeg` 
-2. In the *Privacy's Accessibility* settings under *Security & Settings* allow Terminal and/or sshd (if you're launching the tests over ssh) to control your machine. This is needed to execute some apple scripts that are invoked by the screencaster
-
-<img src="https://raw.githubusercontent.com/Subito-it/sbtuitestbrowser/master/Images/security-privacy-accessibility.png" width="460" />
-
-3. Copy `sbtuitestscreencaster` to ***/usr/local/bin***
-
-With that in place you simply call `sbtuitestscreencaster start path_to_test_derived_data` before invoking xcodebuild and  `sbtuitestscreencaster stop` afterwards.
-
-For example this bash script runs your UI Test launching the screencast and parses the new results:
-
-    #!/bin/bash        
-    DDATA_FOLDER=~/Desktop/iPhone_6s$(date +%s)
-    sbtuitestscreencaster start $DDATA_FOLDER
-    xcodebuild \
-        -project YOURPROJECT.xcodeproj \ *or* -workspace YOURWORKSPACE.xcworkspace \
-        -scheme YOURUITESTSCHEME \
-        -sdk iphonesimulator \
-        -destination 'platform=iOS Simulator,name=iPhone 6s,OS=10.2' \
-        -derivedDataPath $DDATA_FOLDER \
-        test
-    sbtuitestscreencaster stop
-    wget http://localhost:8090/parse
-
-The disk usage footprint will be ~180MB/hour depending on the size of device you're running your tests  on (iPads may take a little more space than iPhones).
-
-## Why not simctl?
-You may ask why we're not using `simctl` to record the video. Answer is that it requires a Metal capable hardware which may not always be the case for continous integration machines (we use an 2012 Mac mini).
-
 # Caveats
 Code isn't probably the cleanest I ever wrote but given the usefulness of the tool I decided to publish it nevertheless.
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C30F54331FF5A42E00A72A18 /* TestActionRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F54321FF5A42D00A72A18 /* TestActionRouteHandler.swift */; };
+		C30F54351FF6324500A72A18 /* TimeInterval+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F54341FF6324500A72A18 /* TimeInterval+String.swift */; };
 		C3881A991FF164B500EB6579 /* ResetRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3881A981FF164B500EB6579 /* ResetRouteHandler.swift */; };
 		C392C1311FE3C22D002DAF3E /* TestStatsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */; };
 		C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */; };
@@ -1123,6 +1125,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C30F54321FF5A42D00A72A18 /* TestActionRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestActionRouteHandler.swift; sourceTree = "<group>"; };
+		C30F54341FF6324500A72A18 /* TimeInterval+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+String.swift"; sourceTree = "<group>"; };
 		C3881A981FF164B500EB6579 /* ResetRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetRouteHandler.swift; sourceTree = "<group>"; };
 		C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestStatsRouteHandler.swift; sourceTree = "<group>"; };
 		C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusRouteHandler.swift; sourceTree = "<group>"; };
@@ -2783,6 +2787,7 @@
 				C3E2529F1FD822950097CF97 /* StatusRouteHandler.swift */,
 				OBJ_28 /* SuiteRouteHandler.swift */,
 				OBJ_29 /* TestRouteHandler.swift */,
+				C30F54321FF5A42D00A72A18 /* TestActionRouteHandler.swift */,
 				C392C1301FE3C22C002DAF3E /* TestStatsRouteHandler.swift */,
 			);
 			path = RouteHandlers;
@@ -3042,6 +3047,7 @@
 				OBJ_12 /* HTTPResponse+Extension.swift */,
 				OBJ_13 /* NSTimeInterval+Extension.swift */,
 				OBJ_14 /* Sequence+QueryString.swift */,
+				C30F54341FF6324500A72A18 /* TimeInterval+String.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -4262,9 +4268,11 @@
 				OBJ_889 /* Model.swift in Sources */,
 				OBJ_890 /* Test.swift in Sources */,
 				C3E252A01FD822960097CF97 /* StatusRouteHandler.swift in Sources */,
+				C30F54351FF6324500A72A18 /* TimeInterval+String.swift in Sources */,
 				C3881A991FF164B500EB6579 /* ResetRouteHandler.swift in Sources */,
 				OBJ_891 /* TestAction.swift in Sources */,
 				OBJ_892 /* TestFailure.swift in Sources */,
+				C30F54331FF5A42E00A72A18 /* TestActionRouteHandler.swift in Sources */,
 				OBJ_893 /* TestRun.swift in Sources */,
 				OBJ_894 /* TestSuite.swift in Sources */,
 				C3E252A21FD830E20097CF97 /* LastResultRouteHandler.swift in Sources */,

@@ -62,6 +62,10 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
         return actions.first(where: { $0.failed })
     }
     
+    public func hasScreenshots() -> Bool {
+        return (actions.first(where: { $0.screenshotPath != nil }) != nil)
+    }
+    
     // MARK: - Protocols
     
     var hashValue: Int { return "\(parentSuite.name)-\(name)".hashValue }
