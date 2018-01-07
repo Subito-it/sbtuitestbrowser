@@ -3,10 +3,6 @@ If you're [running UI Tests using xcodebuild](https://developer.apple.com/librar
 
 sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple web interface to help visualize errors faster (some say even better than Xcode). It is additionally able to display a screencast of the simulator test session that can be synched with the tests steps.
 
-The following demo shows how you can easily browse UI test results from a browser:
-
-<img src="https://raw.githubusercontent.com/Subito-it/sbtuitestbrowser/master/Images/demo.gif" width="480" />
-
 # Cloning
 To get source code ready for Xcode you'll need to compile Swift's package dependencies first
 ```
