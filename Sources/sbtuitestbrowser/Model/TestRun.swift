@@ -19,10 +19,11 @@
 import Foundation
 
 class TestRun: ListItem, FailableItem, Equatable {
-    let basePath: String
+    //let basePath: String
     let plistURL: URL
     let screenshotBasePath: String
     var id: String { return plistURL.lastPathComponent }
+    var groupIdentifier: String?
     
     private(set) var deviceName: String = ""
     private(set) var suites = [TestSuite]()
@@ -30,11 +31,7 @@ class TestRun: ListItem, FailableItem, Equatable {
     init(plistURL: URL, screenshotBaseURL: URL) {
         self.plistURL = plistURL
         
-        // BasePath is used to determine which TestRuns can be grouped together
-        // This occurs when running multiple tests in parallel on the same device
         let basePath = plistURL.deletingLastPathComponent().path
-        let basePath4 = plistURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().path
-        self.basePath = basePath.replacingOccurrences(of: basePath4, with: "")
        
         self.screenshotBasePath = basePath.replacingOccurrences(of: screenshotBaseURL.path, with: "")
         super.init()
@@ -106,7 +103,10 @@ class TestRun: ListItem, FailableItem, Equatable {
     }
     
     public func canBeGrouped(with testRun: TestRun) -> Bool {
-        return deviceName == testRun.deviceName && basePath == testRun.basePath
+        guard let groupIdentifier = groupIdentifier else {
+            return false
+        }
+        return deviceName == testRun.deviceName && groupIdentifier == testRun.groupIdentifier
     }
     
     public func add(_ suites: [TestSuite]) {
@@ -175,6 +175,8 @@ class TestRun: ListItem, FailableItem, Equatable {
         guard extract(formatVersion: dict) == "1.2" else {
             fatalError("Unsupported format version, expected 1.2")
         }
+        
+        self.groupIdentifier = dict["GroupingIdentifier"] as? String
         
         let deviceName = extractSimulatorName(from: dict)
         let testsDict = extractTestableSummaries(from: dict)

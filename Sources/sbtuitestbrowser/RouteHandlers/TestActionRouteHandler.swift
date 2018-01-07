@@ -103,9 +103,9 @@ extension RouteHandler {
                 response.appendBody(string: "<a href='#' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
             }
             
-            let screenshotPath = selectedSubactions.last?.0.screenshotPath ?? ""
-            
-            response.appendBody(string: "<br /><br /><a href='/static\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static\(screenshotPath)' /></a><br />")
+            if let screenshotPath = selectedSubactions.last?.0.screenshotPath {
+                response.appendBody(string: "<br /><br /><a href='/static\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static\(screenshotPath)' /></a><br />")
+            }
         }
         
         response.completed()
