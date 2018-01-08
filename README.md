@@ -1,5 +1,5 @@
 
-If you're [running UI Tests using xcodebuild](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/08-automation.html)  (or anything that uses it like [fastlane](https://github.com/fastlane/fastlane)'s scan) you probably already know how hard it is to pin point an error when it occurs. The number of log information written in the various folder is so large that it's often easier to run the failing test again in Xcode and check from there what went wrong. This process is tedious and time consuming and often doesn't solve the problem because the test might mysteriously pass when manually run in Xcode.
+If you're [running UI Tests using xcodebuild](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/08-automation.html) you probably already know how hard it is to pin point an error when it occurs. The number of log information written in the various folder is so large that it's often easier to run the failing test again in Xcode and check from there what went wrong. This process is tedious and time consuming and often doesn't solve the problem because the test might mysteriously pass when manually run in Xcode.
 
 sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple web interface to help visualize errors faster (some say even better than Xcode). It is additionally able to display a screencast of the simulator test session that can be synched with the tests steps.
 
@@ -23,6 +23,12 @@ This starts a web server reachable at [http://localhost:8090](http://localhost:8
 
 ## Parsing results
 When launched the tool will parse all the test session found inside the _basepath_ specified at launch. As your tests sessions get executed and complete you can force the new results to be parsed by making a `GET` request to [http://localhost:8090/parse](http://localhost:8090/parse)
+
+## Merging results
+
+There are scenarios (e.g. when running ui tests in parallarel over multiple machines) where you want different results to be merged together. When parsing all the TestSummaries.plist sbtuitestbrowser will look and group by the `GroupingIdentifier` key, presenting results as it was a single test session.
+
+
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
