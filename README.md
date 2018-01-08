@@ -28,7 +28,9 @@ When launched the tool will parse all the test session found inside the _basepat
 
 There are scenarios (e.g. when running ui tests in parallarel over multiple machines) where you want different results to be merged together. When parsing all the TestSummaries.plist sbtuitestbrowser will look and group by the `GroupingIdentifier` key, presenting results as it was a single test session.
 
+You can easily set this key after your xcobuild test is completed as follows:
 
+`plutil -insert GroupingIdentifier -string '<GROUPING_IDENTIFIER>' <PATHTOTHETESTSUMMARIES.PLIST>`
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
