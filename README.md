@@ -30,7 +30,7 @@ There are scenarios (e.g. when running ui tests in parallarel over multiple mach
 
 You can easily set this key after your xcobuild test is completed as follows:
 
-`plutil -insert GroupingIdentifier -string '<GROUPING_IDENTIFIER>' <PATHTOTHETESTSUMMARIES.PLIST>`
+`plutil -insert GroupingIdentifier -string '<GROUPING_IDENTIFIER>' <PATHTOTHETESTSUMMARY.plist>`
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
