@@ -44,7 +44,7 @@ extension RouteHandler {
             let screenshotLink = test.hasScreenshots() ? "<a href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)'>\(showScreeshots ? "Hide screenshots" : "Show screenshots")</a>" : "&nbsp;"
             
             let queryParameters = paramDict.queryString()
-            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.id)</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a>",
+            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.displayName())</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a>",
                 centerColumn: "&nbsp;",
                 rightColumn: screenshotLink)
             

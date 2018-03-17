@@ -54,11 +54,12 @@ extension RouteHandler {
                 let crash = (hasFailedTest && hasCrashedTest) ? "🚨 " : ""
                 
                 let totalTests = run.totalTests(errorsOnly: showErrorsOnly)
-                let totalSuites = run.totalSuites(errorsOnly: showErrorsOnly)
+                let totalTestsFailures = run.totalTests(errorsOnly: true)
+                let failureDescription = totalTestsFailures > 0 ? " \(totalTestsFailures) failed" : ""
+                let testDescription = showErrorsOnly ? ", \(totalTestsFailures) failed" : "\(totalTests) tests\(failureDescription)"
                 if (!showErrorsOnly || run.totalTests(errorsOnly: true) > 0) {
-                    response.appendBody(string: "<a href='/details/\(run.id)\(queryParameters)' style='color:\(color)'>\(run.createdString()) - \(run.deviceName)</a>&nbsp;")
-                    response.appendBody(string: "<font color=\"\(color)\">(\(totalSuites) test suites, \(totalTests) tests)</font>&nbsp;")
-                    response.appendBody(string: "\(run.totalDuration().durationString())&nbsp;")
+                    response.appendBody(string: "\(crash)<a title=\"\(run.commitMessage ?? "")\" href='/details/\(run.id)\(queryParameters)' style='color:\(color)'>\(run.displayName())</a>&nbsp;")
+                    response.appendBody(string: "<font color=\"\(color)\">(\(testDescription))</font>&nbsp;")
                     response.appendBody(string: "<br />")
                 }
             }

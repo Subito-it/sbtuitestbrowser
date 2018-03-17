@@ -24,6 +24,10 @@ class TestRun: ListItem, FailableItem, Equatable {
     let screenshotBasePath: String
     var id: String { return plistURL.lastPathComponent }
     var groupIdentifier: String?
+    var branchName: String?
+    var commitHash: String?
+    var commitMessage: String?
+    var codeCoveragePath: String?
     
     private(set) var deviceName: String = ""
     private(set) var suites = [TestSuite]()
@@ -55,6 +59,17 @@ class TestRun: ListItem, FailableItem, Equatable {
         })
         
         return runs
+    }
+    
+    public func displayName() -> String {
+        switch (branchName, commitHash) {
+        case (let branchName?, let commitHash?):
+            return "[\(branchName)] \(commitHash) - \(deviceName)"
+        case (let branchName?, _):
+            return "[\(branchName)] \(createdString()) - \(deviceName)"
+        default:
+            return "\(createdString()) - \(deviceName)"
+        }
     }
     
     public func createdDate() -> Date? {
@@ -176,6 +191,10 @@ class TestRun: ListItem, FailableItem, Equatable {
             fatalError("Unsupported format version, expected 1.2")
         }
         
+        self.branchName = dict["BranchName"] as? String
+        self.commitHash = dict["CommitHash"] as? String
+        self.commitMessage = dict["CommitMessage"] as? String
+        self.codeCoveragePath = dict["CodeCoverageFile"] as? String
         self.groupIdentifier = dict["GroupingIdentifier"] as? String
         
         let deviceName = extractSimulatorName(from: dict)

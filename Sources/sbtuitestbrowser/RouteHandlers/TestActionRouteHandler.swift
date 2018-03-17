@@ -80,7 +80,7 @@ extension RouteHandler {
             let paramDict = request.queryParamsDict
             
             let queryParameters = paramDict.queryString()
-            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.id)</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a><br /><a style='padding-left: 60px;' href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)'>\(test.name)</a>",
+            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.displayName())</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a><br /><a style='padding-left: 60px;' href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)'>\(test.name)</a>",
                 centerColumn: "&nbsp;",
                 rightColumn: "&nbsp;")
             
