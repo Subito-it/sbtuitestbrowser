@@ -19,7 +19,6 @@
 import Foundation
 
 class TestRun: ListItem, FailableItem, Equatable {
-    //let basePath: String
     let plistURL: URL
     let screenshotBasePath: String
     var id: String { return plistURL.lastPathComponent }
