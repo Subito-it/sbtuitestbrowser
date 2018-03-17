@@ -77,4 +77,8 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     func hasFailure() -> Bool {
         return failures.count > 0
     }
+    
+    func hasCrashed() -> Bool {
+        return failures.contains(where: { $0.crash })
+    }
 }

@@ -51,20 +51,21 @@ extension RouteHandler {
             response.appendBody(string: "<h3>")
             if showErrorsOnly {
                 response.threeColumnsBody(leftColumnLink: (run.previousFailed as? TestRun)?.id.appending(queryParameters),
-                                          centerColumn: "\(run.id)<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>",
+                                          centerColumn: "\(run.displayName())<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>",
                     rightColumnLink: (run.nextFailed as? TestRun)?.id.appending(queryParameters))
             } else {
                 response.threeColumnsBody(leftColumnLink: (run.previous as? TestRun)?.id.appending(queryParameters),
-                                          centerColumn: "\(run.id)<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>",
+                                          centerColumn: "\(run.displayName())<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>",
                     rightColumnLink: (run.next as? TestRun)?.id.appending(queryParameters))
             }
             
             response.appendBody(string: "</h3>")
             for suite in run.suites {
                 let color = suite.hasFailure() ? "red" : "green"
+                let crash = suite.hasCrashed() ? "🚨 " : ""
                 let suiteHasFailure = suite.hasFailure()
                 if !showErrorsOnly || suiteHasFailure {
-                    response.appendBody(string: "<a href='/details/\(run.id)/\(suite.name)\(queryParameters)' style='color:\(color)'>\(suite.name)</a>")
+                    response.appendBody(string: "\(crash)<a href='/details/\(run.id)/\(suite.name)\(queryParameters)' style='color:\(color)'>\(suite.name)</a>")
                     response.appendBody(string: "&nbsp;\(suite.totalDuration().durationString())<br>")
                     
                     if showErrorsDetails && suiteHasFailure {

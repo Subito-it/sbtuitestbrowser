@@ -15,6 +15,7 @@ class TestFailure {
     let lineNumber: Int
     let message: String
     let performanceFailure: Bool
+    let crash: Bool
     
     init(dict: [String : Any]) {
         filePath = dict["FileName"] as? String ?? ""
@@ -23,5 +24,6 @@ class TestFailure {
         lineNumber = dict["LineNumber"] as? Int ?? 0
         message = dict["Message"] as? String ?? ""
         performanceFailure = dict["PerformanceFailure"] as? Bool ?? false
+        crash = message.contains(string: " crashed in ")
     }
 }

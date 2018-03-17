@@ -99,4 +99,8 @@ class TestSuite: ListItem, FailableItem, Hashable, Equatable {
     func hasFailure() -> Bool {
         return tests.reduce(false) { $0 || $1.hasFailure() }
     }
+    
+    func hasCrashed() -> Bool {
+        return tests.reduce(false) { $0 || $1.hasCrashed() }
+    }
 }

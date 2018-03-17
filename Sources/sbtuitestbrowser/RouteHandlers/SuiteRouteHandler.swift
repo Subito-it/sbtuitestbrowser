@@ -46,7 +46,7 @@ extension RouteHandler {
             errorLink = "\(errorDetailLink)&nbsp;&nbsp;\(errorLink)"
             
             let queryParameters = paramDict.queryString()
-            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.id)</a>",
+            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.displayName())</a>",
                 centerColumn: "&nbsp;",
                 rightColumn: errorLink)
             response.appendBody(string: "<hr />")
@@ -65,9 +65,10 @@ extension RouteHandler {
             
             for test in suite.tests {
                 let color = test.hasFailure() ? "red" : "green"
+                let crash = test.hasCrashed() ? "🚨 " : ""
                 let testHasFailure = test.hasFailure()
                 if !showErrorsOnly || testHasFailure {
-                    response.appendBody(string: "<a href='/details/\(run.id)/\(suiteName)/\(test.name)' style='color:\(color)'>\(test.name)</a>")
+                    response.appendBody(string: "\(crash)<a href='/details/\(run.id)/\(suiteName)/\(test.name)' style='color:\(color)'>\(test.name)</a>")
                     response.appendBody(string: "&nbsp;\(test.duration.durationString())<br>")
                     
                     if showErrorsDetails && testHasFailure,

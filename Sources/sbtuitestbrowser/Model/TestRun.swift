@@ -313,6 +313,10 @@ class TestRun: ListItem, FailableItem, Equatable {
         return suites.reduce(false) { $0 || $1.hasFailure() }
     }
     
+    func hasCrashed() -> Bool {
+        return suites.reduce(false) { $0 || $1.hasCrashed() }
+    }
+
     var hashValue: Int { return plistURL.hashValue }
     
     static func ==(lhs: TestRun, rhs: TestRun) -> Bool {

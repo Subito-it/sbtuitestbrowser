@@ -20,6 +20,7 @@ import Foundation
 
 protocol FailableItem {
     func hasFailure() -> Bool
+    func hasCrashed() -> Bool
 }
 
 // Slightly lame solution, but simple and working enough
