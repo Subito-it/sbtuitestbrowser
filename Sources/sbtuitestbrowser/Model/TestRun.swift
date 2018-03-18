@@ -30,6 +30,7 @@ class TestRun: ListItem, FailableItem, Equatable {
     
     private(set) var deviceName: String = ""
     private(set) var suites = [TestSuite]()
+    private(set) var coverage: TestCoverage?
     
     init(plistURL: URL, screenshotBaseURL: URL) {
         self.plistURL = plistURL
@@ -195,6 +196,8 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.commitMessage = dict["CommitMessage"] as? String
         self.codeCoveragePath = dict["CodeCoverageFile"] as? String
         self.groupIdentifier = dict["GroupingIdentifier"] as? String
+        
+        self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
         
         let deviceName = extractSimulatorName(from: dict)
         let testsDict = extractTestableSummaries(from: dict)

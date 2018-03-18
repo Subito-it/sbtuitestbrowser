@@ -55,7 +55,7 @@ extension RouteHandler {
                 
                 let totalTests = run.totalTests(errorsOnly: showErrorsOnly)
                 let totalTestsFailures = run.totalTests(errorsOnly: true)
-                let failureDescription = totalTestsFailures > 0 ? " \(totalTestsFailures) failed" : ""
+                let failureDescription = totalTestsFailures > 0 ? "| \(totalTestsFailures) failed" : ""
                 let testDescription = showErrorsOnly ? ", \(totalTestsFailures) failed" : "\(totalTests) tests\(failureDescription)"
                 if (!showErrorsOnly || run.totalTests(errorsOnly: true) > 0) {
                     response.appendBody(string: "\(crash)<a title=\"\(run.commitMessage ?? "")\" href='/details/\(run.id)\(queryParameters)' style='color:\(color)'>\(run.displayName())</a>&nbsp;")

@@ -53,7 +53,8 @@ routes.add(method: .get, uri: "/details/{runplist}", handler: routeHandler.runHa
 routes.add(method: .get, uri: "/details/{runplist}/{suitename}", handler: routeHandler.suiteHandler)
 routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}", handler: routeHandler.testHandler)
 routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}/{actionuuid}", handler: routeHandler.testActionHandler)
-routes.add(method: .get, uri: "/coverage/{runplist}", handler: routeHandler.coverageHandler)
+routes.add(method: .get, uri: "/coverage/{runplist}", handler: routeHandler.coverageHomeHandler)
+routes.add(method: .get, uri: "/coverage/{runplist}/{filepath}", handler: routeHandler.coverageFileHandler)
 
 routes.add(method: .get, uri: "/static/**", handler: {
     request, response in

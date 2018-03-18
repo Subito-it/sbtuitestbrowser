@@ -55,11 +55,11 @@ extension RouteHandler {
             if showErrorsOnly {
                 response.threeColumnsBody(leftColumnLink: (run.previousFailed as? TestRun)?.id.appending(queryParameters),
                                           centerColumn: "\(run.displayName())<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>\(codeCoverageLink)",
-                    rightColumnLink: (run.nextFailed as? TestRun)?.id.appending(queryParameters))
+                                          rightColumnLink: (run.nextFailed as? TestRun)?.id.appending(queryParameters))
             } else {
                 response.threeColumnsBody(leftColumnLink: (run.previous as? TestRun)?.id.appending(queryParameters),
                                           centerColumn: "\(run.displayName())<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>\(codeCoverageLink)",
-                    rightColumnLink: (run.next as? TestRun)?.id.appending(queryParameters))
+                                          rightColumnLink: (run.next as? TestRun)?.id.appending(queryParameters))
             }
             
             response.appendBody(string: "</h3>")
