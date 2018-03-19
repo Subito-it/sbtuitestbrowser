@@ -1,7 +1,7 @@
 
 If you're [running UI Tests using xcodebuild](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/08-automation.html) you probably already know how hard it is to pin point an error when it occurs. The number of log information written in the various folder is so large that it's often easier to run the failing test again in Xcode and check from there what went wrong. This process is tedious and time consuming and often doesn't solve the problem because the test might mysteriously pass when manually run in Xcode.
 
-sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple web interface to help visualize errors faster (some say even better than Xcode). It is additionally able to display a screencast of the simulator test session that can be synched with the tests steps.
+sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple web interface to help visualize errors faster (some say even better than Xcode).
 
 # Cloning
 To get source code ready for Xcode you'll need to compile Swift's package dependencies first
@@ -25,12 +25,22 @@ This starts a web server reachable at [http://localhost:8090](http://localhost:8
 When launched the tool will parse all the test session found inside the _basepath_ specified at launch. As your tests sessions get executed and complete you can force the new results to be parsed by making a `GET` request to [http://localhost:8090/parse](http://localhost:8090/parse)
 
 ## Merging results
-
 There are scenarios (e.g. when running ui tests in parallarel over multiple machines) where you want different results to be merged together. When parsing all the TestSummaries.plist sbtuitestbrowser will look and group by the `GroupingIdentifier` key, presenting results as it was a single test session.
 
 You can easily set this key after your xcobuild test is completed as follows:
 
 `plutil -insert GroupingIdentifier -string '<GROUPING_IDENTIFIER>' <PATHTOTHETESTSUMMARY.plist>`
+
+## TestSummaries.plist custom keys
+Besides the aforementioned `GroupingIdentifier` key there are additional custom keys that are parsed in the TestSummaries.plist.
+
+- `BranchName`: The branch name from where tests were launched. This information will be shown in the test runs homepage.
+- `CommitHash`: The hash of the commit from where tests were launched. This information will be shown in the test runs homepage.
+- `CommitMessage`: The message of the commit from where tests were launched. This information will be shown in the test runs homepage when hovering over a test run.
+- `CodeCoverageFile`: The path to the code coverage file to show code coverage information of a particular test run.
+
+### CodeCoverageFile
+This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile COVERAGE.profdata PRODUCT_PATH > OUTPUT_FILE.json`
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
