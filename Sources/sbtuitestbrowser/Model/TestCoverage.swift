@@ -29,6 +29,27 @@ class TestCoverage {
         self.json = json
     }
     
+    private func fileListFindCommonPathComponent(coverageFiles: [CoverageItem]) -> String {
+        let filePathComponents = coverageFiles.map { $0.shortFilePath.filePathComponents }
+        
+        for filePathComponent in filePathComponents {
+            for (indx, _) in filePathComponents.enumerated() {
+                for filePathComponent2 in filePathComponents {
+                    
+                    if indx > filePathComponent2.count || filePathComponent2[indx] != filePathComponent[indx] {
+                        let separator = filePathComponents.first?.first ?? "/"
+                        return filePathComponents.first?
+                            .prefix(upTo: indx)
+                            .joined(separator: separator)
+                            .replacingOccurrences(of: separator + separator, with: separator) ?? ""
+                    }
+                }
+            }
+        }
+        
+        return ""
+    }
+    
     public func fileList() -> [CoverageItem] {
         guard let datas = self.json["data"] as? [Any],
               let data = datas.first as? [String: Any],
@@ -48,36 +69,9 @@ class TestCoverage {
             let item = CoverageItem(coveragePercentage: coveragePercentage, filePath: filePath, shortFilePath: filePath)
             coverageFiles.append(item)
         }
-        
+
         // Remove common part from path
-        
-        let filePathComponents = coverageFiles.map { $0.shortFilePath.filePathComponents }
-        
-        var indx = 0
-        for filePathComponent in filePathComponents {
-            var all = true
-            indx = 0
-            for _ in filePathComponents {
-                indx += 1
-                for filePathComponent2 in filePathComponents {
-                    
-                    if indx > filePathComponent2.count ||
-                       filePathComponent2[indx] != filePathComponent[indx] {
-                        all = false
-                        break
-                    }
-                }
-                if all == false {
-                    break
-                }
-            }
-            if all == false {
-                break
-            }
-        }
-        
-        let separator = filePathComponents.first?.first ?? "/"
-        let pathToRemove = filePathComponents.first?.prefix(upTo: indx).joined(separator: separator).replacingOccurrences(of: separator + separator, with: separator) ?? ""
+        let pathToRemove = fileListFindCommonPathComponent(coverageFiles: coverageFiles)
         
         return coverageFiles.map { item in
             return CoverageItem(coveragePercentage: item.coveragePercentage, filePath: item.filePath, shortFilePath: item.filePath.replacingOccurrences(of: pathToRemove, with: ""))

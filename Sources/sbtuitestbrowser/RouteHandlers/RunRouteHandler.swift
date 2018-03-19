@@ -50,7 +50,7 @@ extension RouteHandler {
             
             response.appendBody(string: "<h3>")
             let coverageColor = "blue"
-            let codeCoverageLink = (run.codeCoveragePath != nil) ? "<br><br><a href='/coverage/\(run.id)' style='color:\(coverageColor)'>code coverage</a>&nbsp;" : ""
+            let codeCoverageLink = (run.codeCoveragePath != nil) ? "<br><br><a href='/coverage/\(run.id)' style='color:\(coverageColor)'>code coverage</a><br />&nbsp;" : ""
             
             if showErrorsOnly {
                 response.threeColumnsBody(leftColumnLink: (run.previousFailed as? TestRun)?.id.appending(queryParameters),

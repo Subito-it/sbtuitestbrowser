@@ -46,12 +46,19 @@ extension RouteHandler {
             response.appendBody(string: h3("Total coverage: \(totalCoverage)%"))
             
             response.appendBody(string: "<table>")
-            for coverageFile in coverageFiles {
+            for (indx, coverageFile) in coverageFiles.enumerated() {
                 guard let coverageFileB64 = coverageFile.filePath.data(using: .utf8)?.base64EncodedString() else {
                     continue
                 }
-                let coverageBar = "&nbsp;<div style='float: right; width: \(String(describing: Int(Double(coverageFile.coveragePercentage) / 100.0 * 50.0)))px; background-color:PaleGreen'>&nbsp;</div>"
-                response.appendBody(string: "<tr><td>\(coverageFile.coveragePercentage)%\(coverageBar)</td><td><a href='/coverage/\(run.id)/\(coverageFileB64)'>\(coverageFile.shortFilePath)</a></td></tr>")
+                let coverageBar: String
+                if coverageFile.coveragePercentage == 0 {
+                    coverageBar = "&nbsp;<div style='float: left; width: 50px; background-color:OrangeRed'>&nbsp;</div>"
+                } else {
+                    coverageBar = "&nbsp;<div style='float: left; width: \(String(describing: Int(Double(coverageFile.coveragePercentage) / 100.0 * 50.0)))px; background-color:PaleGreen'>&nbsp;</div>"
+                }
+                
+                let rowColor = (indx % 2 == 0) ? "Linen" : ""
+                response.appendBody(string: "<tr style='background-color:\(rowColor)'><td>\(coverageBar)\(coverageFile.coveragePercentage)%&nbsp;</td><td><a href='/coverage/\(run.id)/\(coverageFileB64)'>\(coverageFile.shortFilePath)</a></td></tr>")
             }
             response.appendBody(string: "</table>")
         }
