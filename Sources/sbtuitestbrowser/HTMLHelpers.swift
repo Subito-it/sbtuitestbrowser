@@ -20,3 +20,7 @@ import Foundation
 func h3(_ string: String, bottomMargin: Bool = true) -> String {
     return "<div style='font-weight:bold; font-size: 125%; margin-bottom:\(bottomMargin ? "8" : "0")px'>\(string)</div>"
 }
+
+func h4(_ string: String, bottomMargin: Bool = true) -> String {
+    return "<div style='font-weight:bold; font-size: 100%; margin-bottom:\(bottomMargin ? "8" : "0")px'>\(string)</div>"
+}

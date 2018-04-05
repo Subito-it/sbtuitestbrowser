@@ -66,9 +66,9 @@ class TestRun: ListItem, FailableItem, Equatable {
         case (let branchName?, let commitHash?):
             return "[\(branchName)] \(commitHash) - \(deviceName)"
         case (let branchName?, _):
-            return "[\(branchName)] \(createdString()) - \(deviceName)"
+            return "[\(branchName)] - \(deviceName)"
         default:
-            return "\(createdString()) - \(deviceName)"
+            return "\(deviceName)"
         }
     }
     

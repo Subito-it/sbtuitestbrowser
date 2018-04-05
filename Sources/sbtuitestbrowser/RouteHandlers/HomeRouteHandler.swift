@@ -47,7 +47,22 @@ extension RouteHandler {
                                       rightColumn: self.parsingProgress < 1.0 ? "<br/><small style='color: red'>parsing in progess (\(Int(self.parsingProgress * 100))%)</small><script>setTimeout(function(){ window.location.reload(1); }, 2000);</script>" : "")
             
             let queryParameters = paramDict.queryString()
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .none
+            
+            var lastRunDate: String = ""
             for run in self.runs {
+                if let runCreateDate = run.createdDate() {
+                    let runDate = dateFormatter.string(from: runCreateDate)
+                    if runDate != lastRunDate {
+                        
+                        response.appendBody(string: "<br /><br />\(h4(runDate, bottomMargin: false))")
+                    }
+                    lastRunDate = runDate
+                }
+                
                 let hasFailedTest = (run.suites.reduce(false) { $0 || $1.hasFailure() }) || (run.totalTests(errorsOnly: false) == 0)
                 let hasCrashedTest = (run.suites.reduce(false) { $0 || $1.hasCrashed() })
                 let color = hasFailedTest ? "red" : "green"
@@ -64,7 +79,6 @@ extension RouteHandler {
                 }
             }
             
-            // disable frequently failing which are crashing
             if self.parsingProgress == 1.0 {
                 response.appendBody(string: "<br /><br />")
                 response.appendBody(string: "<hr />")
