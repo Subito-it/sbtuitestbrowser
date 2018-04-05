@@ -68,7 +68,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         case (let branchName?, _):
             return "[\(branchName)] - \(deviceName)"
         default:
-            return "\(deviceName)"
+            return "\(createdString()) - \(deviceName)"
         }
     }
     
