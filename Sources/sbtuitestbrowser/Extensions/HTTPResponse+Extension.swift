@@ -22,7 +22,7 @@ import PerfectHTTP
 extension HTTPResponse {
     
     func wrapDefaultFont(block: () -> Void) {
-        appendBody(string: "<html><meta charset='utf-8' /><body>")
+        appendBody(string: "<html><meta charset='utf-8' /><meta name='viewport' content='user-scalable=no,width=device-width' /><body>")
         appendBody(string: "<div style='font-family: Menlo; font-size: 12px;'>")
         block()
         appendBody(string: "</div>")
