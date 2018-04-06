@@ -50,7 +50,18 @@ extension RouteHandler {
             
             response.appendBody(string: "<h3>")
             let coverageColor = "blue"
-            let codeCoverageLink = (run.codeCoveragePath != nil) ? "<br><br><a href='/coverage/\(run.id)' style='color:\(coverageColor)'>code coverage</a><br />&nbsp;" : ""
+            let codeCoverageLink: String
+            if let coverageInfoPath = run.codeCoveragePath,
+               let coverageInfoData = try? Data(contentsOf: URL(fileURLWithPath: coverageInfoPath)),
+               let coverageInfo = (try? JSONSerialization.jsonObject(with: coverageInfoData, options: [])) as? [String: Any],
+               let datas = coverageInfo["data"] as? [[String: Any]],
+               let totalCoverageInfo = datas.first?["totals"] as? [String: Any],
+               let totalCoverageLines = totalCoverageInfo["lines"] as? [String: Any],
+               let totalCoverage = totalCoverageLines["percent"] as? Int {
+                codeCoverageLink = "<br><br><a href='/coverage/\(run.id)' style='color:\(coverageColor)'>code coverage (\(totalCoverage)%)</a><br />&nbsp;"
+            } else {
+                codeCoverageLink = ""
+            }
             
             if showErrorsOnly {
                 response.threeColumnsBody(leftColumnLink: (run.previousFailed as? TestRun)?.id.appending(queryParameters),
