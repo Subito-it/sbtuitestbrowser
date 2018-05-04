@@ -25,6 +25,7 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     let duration: TimeInterval
     unowned var parentSuite: TestSuite
     let failures: [TestFailure]
+    var diagnosticReportUrl: URL?
 
     private(set) var actions = [TestAction]()
     
@@ -79,6 +80,6 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     }
     
     func hasCrashed() -> Bool {
-        return failures.contains(where: { $0.crash })
+        return diagnosticReportUrl != nil || failures.contains(where: { $0.crash })
     }
 }
