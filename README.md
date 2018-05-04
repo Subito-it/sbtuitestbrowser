@@ -38,6 +38,7 @@ Besides the aforementioned `GroupingIdentifier` key there are additional custom 
 - `CommitHash`: The hash of the commit from where tests were launched. This information will be shown in the test runs homepage.
 - `CommitMessage`: The message of the commit from where tests were launched. This information will be shown in the test runs homepage when hovering over a test run.
 - `CodeCoverageFile`: The path to the code coverage file to show code coverage information of a particular test run.
+- `DiagnosticReports`: The path to the folder containing crash reports (the logs found under ~/Library/Logs/DiagnosticReports) which will be automatically linked to the test that failed. For those tests a link to the crash report will be added to the test detail
 
 ### CodeCoverageFile
 This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile COVERAGE.profdata PRODUCT_PATH > OUTPUT_FILE.json`
