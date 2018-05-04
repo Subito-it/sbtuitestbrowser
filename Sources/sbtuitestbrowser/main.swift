@@ -55,6 +55,7 @@ routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}", hand
 routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}/{actionuuid}", handler: routeHandler.testActionHandler)
 routes.add(method: .get, uri: "/coverage/{runplist}", handler: routeHandler.coverageHomeHandler)
 routes.add(method: .get, uri: "/coverage/{runplist}/{filepath}", handler: routeHandler.coverageFileHandler)
+routes.add(method: .get, uri: "/diagnostic_report/{runplist}/{suitename}/{testname}", handler: routeHandler.diagnosticReportHandler)
 
 routes.add(method: .get, uri: "/static/**", handler: {
     request, response in

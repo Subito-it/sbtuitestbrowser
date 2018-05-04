@@ -50,14 +50,19 @@ extension RouteHandler {
             
             response.appendBody(string: "<hr />")
             
+            var diagnosticReportLink = ""
+            if test.hasCrashed() {
+                diagnosticReportLink = "<br /><a href='/diagnostic_report/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)'>diagnostic report</a><br /><br />"
+            }
+            
             response.appendBody(string: "<h3>")
             if showErrorsOnly {
                 response.threeColumnsBody(leftColumnLink: (test.previousFailed as? Test)?.name.appending(queryParameters),
-                                          centerColumn: test.name,
+                                          centerColumn: test.name + diagnosticReportLink,
                                           rightColumnLink: (test.nextFailed as? Test)?.name.appending(queryParameters))
             } else {
                 response.threeColumnsBody(leftColumnLink: (test.previous as? Test)?.name.appending(queryParameters),
-                                          centerColumn: test.name,
+                                          centerColumn: test.name + diagnosticReportLink,
                                           rightColumnLink: (test.next as? Test)?.name.appending(queryParameters))
             }
             response.appendBody(string: "</h3>")
