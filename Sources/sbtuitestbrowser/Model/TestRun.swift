@@ -28,6 +28,12 @@ class TestRun: ListItem, FailableItem, Equatable {
     var commitMessage: String?
     var codeCoveragePath: String?
     
+    static var diagnosticReportDateFormatter: DateFormatter {
+        let d = DateFormatter()
+        d.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS Z"
+        return d
+    }
+    
     private(set) var deviceName: String = ""
     private(set) var suites = [TestSuite]()
     private(set) var coverage: TestCoverage?
@@ -173,6 +179,14 @@ class TestRun: ListItem, FailableItem, Equatable {
         return suites.first(where: { $0.name == named})
     }
     
+    public func allTests() -> [Test] {
+        var ret = [Test]()
+        for suite in suites {
+            ret += suite.tests
+        }
+        return ret
+    }
+    
     public func failingSuites() -> [TestSuite] {
         return suites.filter { $0.hasFailure() }
     }
@@ -215,6 +229,41 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.add(runSuites)
         
         self.deviceName = deviceName
+        
+        if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
+            let url = plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
+            let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
+            
+            if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
+                // Try to match diagnostic reports
+                for test in allTests() {
+                    for url in diagnosticReportUrls {
+                        if diagnosticReport(at: url, matches: test) {
+                            test.diagnosticReportUrl = url
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func diagnosticReport(at url: URL, matches: Test) -> Bool {
+        guard let report = try? String(contentsOf: url, encoding: .utf8) else {
+            return false
+        }
+        
+        let dateMarker = "Date/Time:"
+        let lines = report.split(separator: "\n")
+        let dateLine = lines.first(where: { $0.contains(dateMarker) })
+        if let dateString = dateLine?.replacingOccurrences(of: dateMarker, with: "").trimmingCharacters(in: .whitespacesAndNewlines),
+           let date = TestRun.diagnosticReportDateFormatter.date(from: dateString) {
+            let start = matches.startTimeinterval
+            let stop = matches.stopTimeinterval
+            let diagnosticReportTimeInterval = date.timeIntervalSinceReferenceDate
+            return diagnosticReportTimeInterval > start && diagnosticReportTimeInterval < stop
+        }
+
+        return false
     }
     
     private func suites(from dicts: [[String : Any]]) -> [TestSuite] {
