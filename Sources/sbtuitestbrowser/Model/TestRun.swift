@@ -260,7 +260,8 @@ class TestRun: ListItem, FailableItem, Equatable {
             let start = matches.startTimeinterval
             let stop = matches.stopTimeinterval
             let diagnosticReportTimeInterval = date.timeIntervalSinceReferenceDate
-            return diagnosticReportTimeInterval > start && diagnosticReportTimeInterval < stop
+            
+            return (diagnosticReportTimeInterval > start) && (diagnosticReportTimeInterval < stop + 1.0)
         }
 
         return false
