@@ -41,7 +41,10 @@ Besides the aforementioned `GroupingIdentifier` key there are additional custom 
 - `DiagnosticReports`: The path to the folder containing crash reports (the logs found under ~/Library/Logs/DiagnosticReports) which will be automatically linked to the test that failed. For those tests a link to the crash report will be added to the test detail
 
 ### CodeCoverageFile
-This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile COVERAGE.profdata PRODUCT_PATH > OUTPUT_FILE.json`
+This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile #{coverage_file}.profdata #{product_path} > #{output_filename}.json`
+
+where `product_path = "#{derived_data_base}/Build/Products/#{testing_configuration}-iphonesimulator/#{buildable_name}/#{executable_name}"`
+
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
