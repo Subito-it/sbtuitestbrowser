@@ -197,10 +197,28 @@ class TestRun: ListItem, FailableItem, Equatable {
     
     // MARK: - Private
     
+    private func read(plist url: URL) -> [String : Any]? {
+        var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
+        var plistData: [String: Any] = [:]
+        guard let plistXML = try? Data(contentsOf: self.plistURL) else {
+            return nil
+        }
+        do {
+            plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String: Any]
+            
+        } catch {
+            print("Error reading plist: \(error)")
+            return nil
+        }
+        
+        return plistData
+    }
+    
     private func parse() {
-        guard let dict = NSDictionary(contentsOf: self.plistURL) as? [String : Any] else {
+        guard let dict = read(plist: self.plistURL) else {
             fatalError("Failed to load dictionary")
         }
+
         guard extract(formatVersion: dict) == "1.2" else {
             fatalError("Unsupported format version, expected 1.2")
         }
@@ -230,16 +248,20 @@ class TestRun: ListItem, FailableItem, Equatable {
         
         self.deviceName = deviceName
         
-        if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
-            let url = plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
-            let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
-            
-            if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
-                // Try to match diagnostic reports
-                for test in allTests() {
-                    for url in diagnosticReportUrls {
-                        if diagnosticReport(at: url, matches: test) {
-                            test.diagnosticReportUrl = url
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let `self` = self else { return }
+
+            if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
+                let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
+                let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
+
+                if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
+                    // Try to match diagnostic reports
+                    for test in self.allTests() {
+                        for url in diagnosticReportUrls {
+                            if self.diagnosticReport(at: url, matches: test) {
+                                test.diagnosticReportUrl = url
+                            }
                         }
                     }
                 }
