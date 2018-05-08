@@ -247,23 +247,19 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.add(runSuites)
         
         self.deviceName = deviceName
-        
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let `self` = self else { return }
-            
-            self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
+                
+        self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
 
-            if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
-                let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
-                let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
+        if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
+            let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
+            let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
 
-                if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
-                    // Try to match diagnostic reports
-                    for test in self.allTests() {
-                        for url in diagnosticReportUrls {
-                            if self.diagnosticReport(at: url, matches: test) {
-                                test.diagnosticReportUrl = url
-                            }
+            if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
+                // Try to match diagnostic reports
+                for test in self.allTests() {
+                    for url in diagnosticReportUrls {
+                        if self.diagnosticReport(at: url, matches: test) {
+                            test.diagnosticReportUrl = url
                         }
                     }
                 }
@@ -299,32 +295,12 @@ class TestRun: ListItem, FailableItem, Equatable {
     }
     
     private func tests(from dicts: [[String : Any]], suite: TestSuite) -> [Test] {
-        func actions(from dicts: [[String : Any]], parentAction: TestAction?, parentTest: Test) -> [TestAction] {
-            var ret = [TestAction]()
-            
-            for dict in dicts {
-                let action = TestAction(dict: dict, parentAction: parentAction, parentTest: parentTest)
-                
-                ret.append(action)
-                
-                if let subActivities = dict["SubActivities"] as? [[String : Any]] {
-                    ret += actions(from: subActivities, parentAction: action, parentTest: parentTest)
-                }
-            }
-            
-            return ret
-        }
-        
         var ret = [Test]()
         
         dicts.filter({ $0["ParentTestName"] as! String == suite.name }).forEach {
             testDict in
             
             let test = Test(dict: testDict, parentSuite: suite)
-            
-            if let activitySummaries = testDict["ActivitySummaries"] as? [[String : Any]] {
-                test.add(actions(from: activitySummaries, parentAction: nil, parentTest: test))
-            }
             
             ret.append(test)
         }

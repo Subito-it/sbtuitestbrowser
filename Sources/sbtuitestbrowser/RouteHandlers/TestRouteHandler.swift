@@ -69,10 +69,12 @@ extension RouteHandler {
             
             var lastParentAction: TestAction? = nil
             var paddingLeft = 0
+            
+            let testActions = test.actions()
 
-            let hasActions = test.actions.count > 0
+            let hasActions = testActions.count > 0
             if hasActions {
-                for action in test.actions {
+                for action in testActions {
                     let color = action.failed ? "red" : "green"
                     
                     if action.parentAction == nil {

@@ -28,12 +28,19 @@ extension RouteHandler {
         let targetActionUuid = request.urlVariables["actionuuid"] ?? ""
 
         guard let run = self.runs.first(where: { $0.id == runPlist }),
-            let suite = run.suites.first(where: { $0.name == suiteName }),
-            let test = suite.test(named: testName),
-            let targetAction = test.actions.first(where: { $0.uuid == targetActionUuid }) else {
-                response.appendBody(string: h3("Error! TestRoute #1"))
-                response.completed()
-                return
+              let suite = run.suites.first(where: { $0.name == suiteName }),
+              let test = suite.test(named: testName) else {
+            response.appendBody(string: h3("Error! TestRoute #1"))
+            response.completed()
+            return
+        }
+        
+        let testActions = test.actions()
+    
+        guard let targetAction = testActions.first(where: { $0.uuid == targetActionUuid }) else {
+            response.appendBody(string: h3("Error! TestRoute #2"))
+            response.completed()
+            return
         }
         
         var previousAction: TestAction?
@@ -43,7 +50,7 @@ extension RouteHandler {
         var actionFound = false
         var selectedSubactions = [(TestAction, Int)]() // (action, padding)
         
-        for action in test.actions {
+        for action in testActions {
             if actionFound {
                 if targetAction.screenshotPath != nil || nextAction?.screenshotPath != nil {
                     nextAction = action

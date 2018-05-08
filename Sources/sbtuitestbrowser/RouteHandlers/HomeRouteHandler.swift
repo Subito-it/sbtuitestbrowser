@@ -63,8 +63,8 @@ extension RouteHandler {
                     lastRunDate = runDate
                 }
                 
-                let hasFailedTest = (run.suites.reduce(false) { $0 || $1.hasFailure() }) || (run.totalTests(errorsOnly: false) == 0)
-                let hasCrashedTest = (run.suites.reduce(false) { $0 || $1.hasCrashed() })
+                let hasFailedTest = run.hasFailure() || (run.totalTests(errorsOnly: false) == 0)
+                let hasCrashedTest = run.hasCrashed()
                 let color = hasFailedTest ? "red" : "green"
                 let crash = (hasFailedTest && hasCrashedTest) ? "🚨 " : ""
                 
