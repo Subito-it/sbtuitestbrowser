@@ -27,6 +27,7 @@ class TestRun: ListItem, FailableItem, Equatable {
     var commitHash: String?
     var commitMessage: String?
     var codeCoveragePath: String?
+    var repoBasePath: String?
     
     static var diagnosticReportDateFormatter: DateFormatter {
         let d = DateFormatter()
@@ -228,8 +229,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.commitMessage = dict["CommitMessage"] as? String
         self.codeCoveragePath = dict["CodeCoverageFile"] as? String
         self.groupIdentifier = dict["GroupingIdentifier"] as? String
-        
-        self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
+        self.repoBasePath = dict["RepoPath"] as? String
         
         let deviceName = extractSimulatorName(from: dict)
         let testsDict = extractTestableSummaries(from: dict)
@@ -250,6 +250,8 @@ class TestRun: ListItem, FailableItem, Equatable {
         
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let `self` = self else { return }
+            
+            self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
 
             if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
                 let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized

@@ -30,23 +30,26 @@ extension RouteHandler {
         let coverageFilePathB64 = request.urlVariables["filepath"] ?? ""
         
         guard let run = self.runs.first(where: { $0.id == runPlist }),
+              let repoBasePath = run.repoBasePath,
+              let commitHash = run.commitHash,
               let coverageFilePathB64Data = Data(base64Encoded: coverageFilePathB64),
               let coverageFilePath = String(data: coverageFilePathB64Data, encoding: .utf8) else {
-                response.appendBody(string: h3("Error! Coverage #1"))
-                response.completed()
-                return
+            response.appendBody(string: h3("Error! Coverage #1"))
+            response.completed()
+            return
         }
         
-        let coverageFileUrl = URL(fileURLWithPath: coverageFilePath)
-        
-        guard let fileContentLines = try? String(contentsOf: coverageFileUrl).components(separatedBy: "\n"),
-              let coveredLines = run.coverage?.coveredLines(filename: coverageFilePath),
+        guard let coveredLines = run.coverage?.coveredLines(filename: coverageFilePath),
               let totalCoverage = run.coverage?.totalCoverage(filename: coverageFilePath) else {
             response.appendBody(string: h3("Error! Coverage #2"))
             response.completed()
             return
         }
         
+        let coverageFile = "cd \(repoBasePath); git --no-pager show \(commitHash):\(coverageFilePath)"
+        let coverageFileContent = coverageFile.shellExecute()
+        let fileContentLines = coverageFileContent.components(separatedBy: "\n")
+
         response.wrapDefaultFont() {
             response.threeColumnsBody(leftColumn: "<a href='/'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)'>\(run.displayName())</a><br /><a style='padding-left: 40px;' href='/coverage/\(run.id)'>coverage</a>",
                 centerColumn: "&nbsp;",
