@@ -247,19 +247,25 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.add(runSuites)
         
         self.deviceName = deviceName
+        
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let `self` = self else {
+                return
+            }
+    
+            self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
+            
+            if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
+                let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
+                let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
                 
-        self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
-
-        if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
-            let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
-            let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
-
-            if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
-                // Try to match diagnostic reports
-                for test in self.allTests() {
-                    for url in diagnosticReportUrls {
-                        if self.diagnosticReport(at: url, matches: test) {
-                            test.diagnosticReportUrl = url
+                if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
+                    // Try to match diagnostic reports
+                    for test in self.allTests() {
+                        for url in diagnosticReportUrls {
+                            if self.diagnosticReport(at: url, matches: test) {
+                                test.diagnosticReportUrl = url
+                            }
                         }
                     }
                 }
