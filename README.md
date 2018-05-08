@@ -44,8 +44,7 @@ Besides the aforementioned `GroupingIdentifier` key there are additional custom 
 ### CodeCoverageFile
 This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile #{coverage_file}.profdata #{product_path} > #{output_filename}.json`
 
-where `product_path = "#{derived_data_base}/Build/Products/#{testing_configuration}-iphonesimulator/#{buildable_name}/#{executable_name}"`
-
+Where `product_path = "#{derived_data_base}/Build/Products/#{testing_configuration}-iphonesimulator/#{buildable_name}/#{executable_name}"`
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
