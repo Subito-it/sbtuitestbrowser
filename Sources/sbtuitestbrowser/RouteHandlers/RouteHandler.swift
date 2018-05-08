@@ -24,6 +24,7 @@ class RouteHandler {
     var runs = [TestRun]()
     var groupedPlists = Set<URL>()
     var parsingProgress: Double = 1.0
+    var parsingStart: TimeInterval = 0.0
     
     private(set) var runSyncQueue = DispatchQueue(label: "synch_queue")
     

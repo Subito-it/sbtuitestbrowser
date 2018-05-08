@@ -48,6 +48,7 @@ extension RouteHandler {
             return
         }
         
+        parsingStart = CFAbsoluteTimeGetCurrent()
         parsingProgress = 0.0
         
         var plists = plistFiles(baseFolderURL, matchSuffix: "_TestSummaries.plist")
@@ -140,6 +141,7 @@ extension RouteHandler {
                     }
                 }
                 
+                print("⏱ Parsing done in \(CFAbsoluteTimeGetCurrent() - self.parsingStart)s")
                 self.parsingProgress = 1.0
             }
         }
