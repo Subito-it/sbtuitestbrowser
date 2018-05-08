@@ -204,9 +204,9 @@ class TestRun: ListItem, FailableItem, Equatable {
         guard let plistXML = try? Data(contentsOf: self.plistURL) else {
             return nil
         }
+        
         do {
             plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String: Any]
-            
         } catch {
             print("Error reading plist: \(error)")
             return nil
@@ -247,11 +247,12 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.add(runSuites)
         
         self.deviceName = deviceName
-        
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let `self` = self else {
-                return
-            }
+  
+// This could be dispatched in background. For integrity we don't do that, yet.
+//        DispatchQueue.global(qos: .background).async { [weak self] in
+//            guard let `self` = self else {
+//                return
+//            }
     
             self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
             
@@ -270,7 +271,7 @@ class TestRun: ListItem, FailableItem, Equatable {
                     }
                 }
             }
-        }
+//        }
     }
     
     private func diagnosticReport(at url: URL, matches: Test) -> Bool {

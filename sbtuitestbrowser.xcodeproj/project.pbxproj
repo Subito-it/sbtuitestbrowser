@@ -3406,11 +3406,6 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0930;
-				TargetAttributes = {
-					"sbtuitestbrowser::sbtuitestbrowser" = {
-						DevelopmentTeam = F93T2PM4GE;
-					};
-				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "sbtuitestbrowser" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -5126,8 +5121,7 @@
 		OBJ_881 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				DEVELOPMENT_TEAM = F93T2PM4GE;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",

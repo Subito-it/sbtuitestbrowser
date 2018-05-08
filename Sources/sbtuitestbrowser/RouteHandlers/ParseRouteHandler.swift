@@ -152,32 +152,9 @@ extension RouteHandler {
             return []
         }
         
-        let fileManager = FileManager.default
-        let keys = [URLResourceKey.isDirectoryKey, URLResourceKey.localizedNameKey]
-        let options: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsHiddenFiles]
-        
-        let enumerator = fileManager.enumerator(
-            at: baseURL,
-            includingPropertiesForKeys: keys,
-            options: options,
-            errorHandler: {(url, error) -> Bool in
-                return true
-        })
-        
-        var plistToProcess = [URL]()
-        let foldersToSkip = ["DataStore", "ModuleCache", "Build", "Attachments"]
-        while let file = enumerator?.nextObject() as? URL {
-            if #available(OSX 10.11, *) {
-                if file.hasDirectoryPath && foldersToSkip.contains(file.lastPathComponent) {
-                    enumerator?.skipDescendants()
-                }
-            }
-            
-            if file.absoluteString.hasSuffix(matchSuffix) == true {
-                plistToProcess.append(file)
-            }
-        }
-        
+        let findPlistsCmd = "find \(baseURL.absoluteString) -name *.plist -type d \\( -name DataStore -o -name ModuleCache -o -name Build -o -name Attachments \\) -prune -o -print | grep -e '_TestSummaries.plist$'"
+        var plistToProcess = findPlistsCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
+
         plistToProcess.sort { ( u1: URL, u2: URL) -> Bool in
             do {
                 let values1 = try u1.resourceValues(forKeys: [.creationDateKey])
