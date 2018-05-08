@@ -26,6 +26,7 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     unowned var parentSuite: TestSuite
     let failures: [TestFailure]
     var diagnosticReportUrl: URL?
+    let screenshotBasePath: String
     
     private let actionsDataUrl: URL?
     
@@ -33,6 +34,7 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
         self.name = dict["TestName"] as! String
         self.duration = dict["Duration"] as! TimeInterval
         self.parentSuite = parentSuite
+        self.screenshotBasePath = parentSuite.parentRun.screenshotBasePath
         
         guard let activitySummaries = dict["ActivitySummaries"] as? [[String : Any]] else {
             self.startTimeinterval = 0.0
@@ -94,7 +96,7 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
         var ret = [TestAction]()
         
         for dict in dicts {
-            let action = TestAction(dict: dict, parentAction: parentAction, parentTest: parentTest)
+            let action = TestAction(dict: dict, parentAction: parentAction, parentTest: parentTest, screenshotBasePath: self.screenshotBasePath)
             
             ret.append(action)
             

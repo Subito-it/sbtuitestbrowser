@@ -248,34 +248,28 @@ class TestRun: ListItem, FailableItem, Equatable {
         
         self.deviceName = deviceName
   
-//        DispatchQueue.global(qos: .background).async { [weak self] in
-//            guard let `self` = self else {
-//                return
-//            }
+        self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
         
-            self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
+        if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
+            let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
             
-            if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
-                let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
+            let findCmd = "find \(url.path) -name *.crash"
+            let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
+            
+            let diagnosticReportTimeIntervals = zip(diagnosticReportUrls, diagnosticReportUrls.map { self.diagnosticReportTimeInterval(at: $0)} )
+            
+            // Try to match diagnostic reports
+            for test in self.allTests() {
+                let start = test.startTimeinterval
+                let stop = test.stopTimeinterval
                 
-                let findCmd = "find \(url.path) -name *.crash"
-                let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
-                
-                let diagnosticReportTimeIntervals = zip(diagnosticReportUrls, diagnosticReportUrls.map { self.diagnosticReportTimeInterval(at: $0)} )
-                
-                // Try to match diagnostic reports
-                for test in self.allTests() {
-                    let start = test.startTimeinterval
-                    let stop = test.stopTimeinterval
-                    
-                    for diagnosticReportTimeInterval in diagnosticReportTimeIntervals {
-                        if (diagnosticReportTimeInterval.1 > start) && (diagnosticReportTimeInterval.1 < stop + 1.0) {
-                            test.diagnosticReportUrl = diagnosticReportTimeInterval.0
-                        }
+                for diagnosticReportTimeInterval in diagnosticReportTimeIntervals {
+                    if (diagnosticReportTimeInterval.1 > start) && (diagnosticReportTimeInterval.1 < stop + 1.0) {
+                        test.diagnosticReportUrl = diagnosticReportTimeInterval.0
                     }
                 }
             }
-//        }
+        }
     }
     
     private func diagnosticReportTimeInterval(at url: URL) -> TimeInterval {

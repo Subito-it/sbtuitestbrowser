@@ -31,7 +31,7 @@ class TestAction: Hashable, Equatable {
     
     private(set) var subActions = [TestAction]()
     
-    init(dict: [String : Any], parentAction: TestAction?, parentTest: Test) {
+    init(dict: [String : Any], parentAction: TestAction?, parentTest: Test, screenshotBasePath: String) {
         let actionName = dict["Title"] as! String
         self.name = actionName
         self.uuid = dict["UUID"] as! String
@@ -46,8 +46,6 @@ class TestAction: Hashable, Equatable {
         
         self.parentAction = parentAction
         self.parentTest = parentTest
-        
-        let screenshotBasePath = parentTest.parentSuite.parentRun.screenshotBasePath
         
         if (dict["HasScreenshotData"] as? Bool) == true {
             self.screenshotPath = "\(screenshotBasePath)/Attachments/Screenshot_\(self.uuid).jpg"
