@@ -34,14 +34,17 @@ You can easily set this key after your xcobuild test is completed as follows:
 ## TestSummaries.plist custom keys
 Besides the aforementioned `GroupingIdentifier` key there are additional custom keys that are parsed in the TestSummaries.plist.
 
+- `RepoPath`: The path where source code of the project being tested is located.
 - `BranchName`: The branch name from where tests were launched. This information will be shown in the test runs homepage.
 - `CommitHash`: The hash of the commit from where tests were launched. This information will be shown in the test runs homepage.
 - `CommitMessage`: The message of the commit from where tests were launched. This information will be shown in the test runs homepage when hovering over a test run.
-- `CodeCoverageFile`: The path to the code coverage file to show code coverage information of a particular test run.
+- `CodeCoverageFile`: The path to the code coverage file to show code coverage information of a particular test run. **Requires `RepoPath` to be set**.
 - `DiagnosticReports`: The path to the folder containing crash reports (the logs found under ~/Library/Logs/DiagnosticReports) which will be automatically linked to the test that failed. For those tests a link to the crash report will be added to the test detail
 
 ### CodeCoverageFile
-This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile COVERAGE.profdata PRODUCT_PATH > OUTPUT_FILE.json`
+This is a JSON file (OUTPUT_FILE.json) that was generated using `xcrun llvm-cov export -instr-profile #{coverage_file}.profdata #{product_path} > #{output_filename}.json`
+
+Where `product_path = "#{derived_data_base}/Build/Products/#{testing_configuration}-iphonesimulator/#{buildable_name}/#{executable_name}"`
 
 ## xcodebuild example
 To get the most out of sbtuitestbrowser it's highly recommended to specify a unique `-derivedDataPath` for every test session you run. This will allow to show a complete history of your tests which can be useful to compare tests over time
