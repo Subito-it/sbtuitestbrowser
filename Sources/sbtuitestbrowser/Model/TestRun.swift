@@ -248,25 +248,29 @@ class TestRun: ListItem, FailableItem, Equatable {
         
         self.deviceName = deviceName
   
-// This could be dispatched in background. For integrity we don't do that, yet.
 //        DispatchQueue.global(qos: .background).async { [weak self] in
 //            guard let `self` = self else {
 //                return
 //            }
-    
+        
             self.coverage = TestCoverage(coveragePath: self.codeCoveragePath, parentRun: self)
             
             if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
                 let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
-                let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil)
                 
-                if let diagnosticReportUrls = enumerator?.allObjects as? [URL] {
-                    // Try to match diagnostic reports
-                    for test in self.allTests() {
-                        for url in diagnosticReportUrls {
-                            if self.diagnosticReport(at: url, matches: test) {
-                                test.diagnosticReportUrl = url
-                            }
+                let findCmd = "find \(url.path) -name *.crash"
+                let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
+                
+                let diagnosticReportTimeIntervals = zip(diagnosticReportUrls, diagnosticReportUrls.map { self.diagnosticReportTimeInterval(at: $0)} )
+                
+                // Try to match diagnostic reports
+                for test in self.allTests() {
+                    let start = test.startTimeinterval
+                    let stop = test.stopTimeinterval
+                    
+                    for diagnosticReportTimeInterval in diagnosticReportTimeIntervals {
+                        if (diagnosticReportTimeInterval.1 > start) && (diagnosticReportTimeInterval.1 < stop + 1.0) {
+                            test.diagnosticReportUrl = diagnosticReportTimeInterval.0
                         }
                     }
                 }
@@ -274,24 +278,22 @@ class TestRun: ListItem, FailableItem, Equatable {
 //        }
     }
     
-    private func diagnosticReport(at url: URL, matches: Test) -> Bool {
+    private func diagnosticReportTimeInterval(at url: URL) -> TimeInterval {
         guard let report = try? String(contentsOf: url, encoding: .utf8) else {
-            return false
+            return 0
         }
         
         let dateMarker = "Date/Time:"
         let lines = report.split(separator: "\n")
         let dateLine = lines.first(where: { $0.contains(dateMarker) })
         if let dateString = dateLine?.replacingOccurrences(of: dateMarker, with: "").trimmingCharacters(in: .whitespacesAndNewlines),
-           let date = TestRun.diagnosticReportDateFormatter.date(from: dateString) {
-            let start = matches.startTimeinterval
-            let stop = matches.stopTimeinterval
+            let date = TestRun.diagnosticReportDateFormatter.date(from: dateString) {
             let diagnosticReportTimeInterval = date.timeIntervalSinceReferenceDate
             
-            return (diagnosticReportTimeInterval > start) && (diagnosticReportTimeInterval < stop + 1.0)
+            return diagnosticReportTimeInterval
         }
-
-        return false
+        
+        return 0
     }
     
     private func suites(from dicts: [[String : Any]]) -> [TestSuite] {

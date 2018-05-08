@@ -13,7 +13,6 @@ class TestCoverage {
     unowned var parentRun: TestRun
     
     private(set) var coveragePath: String
-    private(set) var json: [String: Any]
     
     init?(coveragePath: String?, parentRun: TestRun) {
         guard let coveragePath = coveragePath else {
@@ -21,12 +20,6 @@ class TestCoverage {
         }
         self.coveragePath = coveragePath
         self.parentRun = parentRun
-        
-        let coverageUrl = URL(fileURLWithPath: self.coveragePath)
-        guard let json = (try? JSONSerialization.jsonObject(with: Data(contentsOf: coverageUrl))) as? [String: Any] else {
-            return nil
-        }
-        self.json = json
     }
     
     private func fileListFindCommonPathComponent(coverageFiles: [CoverageItem]) -> String {
@@ -35,7 +28,6 @@ class TestCoverage {
         for filePathComponent in filePathComponents {
             for (indx, _) in filePathComponents.enumerated() {
                 for filePathComponent2 in filePathComponents {
-                    
                     if indx > filePathComponent2.count || filePathComponent2[indx] != filePathComponent[indx] {
                         let separator = filePathComponents.first?.first ?? "/"
                         return filePathComponents.first?
@@ -51,7 +43,10 @@ class TestCoverage {
     }
     
     public func fileList() -> [CoverageItem] {
-        guard let datas = self.json["data"] as? [Any],
+        let coverageUrl = URL(fileURLWithPath: self.coveragePath)
+        
+        guard let json = (try? JSONSerialization.jsonObject(with: Data(contentsOf: coverageUrl))) as? [String: Any],
+              let datas = json["data"] as? [Any],
               let data = datas.first as? [String: Any],
               let files = data["files"] as? [[String: Any]] else {
             return []
@@ -79,7 +74,10 @@ class TestCoverage {
     }
     
     public func totalCoverage() -> Int {
-        guard let datas = self.json["data"] as? [Any],
+        let coverageUrl = URL(fileURLWithPath: self.coveragePath)
+        
+        guard let json = (try? JSONSerialization.jsonObject(with: Data(contentsOf: coverageUrl))) as? [String: Any],
+              let datas = json["data"] as? [Any],
               let data = datas.first as? [String: Any],
               let totals = data["totals"] as? [String: Any],
               let totalLines = totals["lines"] as? [String: Any],
@@ -91,10 +89,13 @@ class TestCoverage {
     }
     
     public func totalCoverage(filename: String) -> Int {
-        guard let datas = self.json["data"] as? [Any],
-            let data = datas.first as? [String: Any],
-            let files = data["files"] as? [[String: Any]] else {
-                return 0
+        let coverageUrl = URL(fileURLWithPath: self.coveragePath)
+        
+        guard let json = (try? JSONSerialization.jsonObject(with: Data(contentsOf: coverageUrl))) as? [String: Any],
+              let datas = json["data"] as? [Any],
+              let data = datas.first as? [String: Any],
+              let files = data["files"] as? [[String: Any]] else {
+            return 0
         }
         
         for file in files {
@@ -112,7 +113,10 @@ class TestCoverage {
     }
     
     public func coveredLines(filename: String) -> Set<Int> {
-        guard let datas = self.json["data"] as? [Any],
+        let coverageUrl = URL(fileURLWithPath: self.coveragePath)
+        
+        guard let json = (try? JSONSerialization.jsonObject(with: Data(contentsOf: coverageUrl))) as? [String: Any],
+              let datas = json["data"] as? [Any],
               let data = datas.first as? [String: Any],
               let files = data["files"] as? [[String: Any]] else {
             return []

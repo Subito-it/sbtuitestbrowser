@@ -152,7 +152,7 @@ extension RouteHandler {
             return []
         }
         
-        let findPlistsCmd = "find \(baseURL.absoluteString) -name *.plist -type d \\( -name DataStore -o -name ModuleCache -o -name Build -o -name Attachments \\) -prune -o -print | grep -e '_TestSummaries.plist$'"
+        let findPlistsCmd = "find \(baseURL.absoluteString) -type d \\( -name DataStore -o -name ModuleCache -o -name Build -o -name Attachments \\) -prune -o -print | grep -e '_TestSummaries.plist$'"
         var plistToProcess = findPlistsCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
 
         plistToProcess.sort { ( u1: URL, u2: URL) -> Bool in
