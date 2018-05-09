@@ -48,6 +48,8 @@ extension RouteHandler {
             return
         }
         
+        _ = "rm -rf /tmp/sbtuitestbrowser".shellExecute()
+                
         parsingStart = CFAbsoluteTimeGetCurrent()
         parsingProgress = 0.0
         
