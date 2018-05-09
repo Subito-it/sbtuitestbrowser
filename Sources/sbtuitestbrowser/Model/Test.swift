@@ -59,7 +59,7 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
         let failureSummaries = dict["FailureSummaries"] as? [[String : Any]]
         failures = failureSummaries?.map { TestFailure(dict: $0) } ?? []
         
-        let temporaryUrl = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("sbtuitesttunnel")
+        let temporaryUrl = Test.temporaryFolder(parentSuite: parentSuite)
         
         try? FileManager.default.createDirectory(at: temporaryUrl, withIntermediateDirectories: true, attributes: nil)
         let actionsDataUrl = temporaryUrl.appendingPathComponent(ProcessInfo().globallyUniqueString)
@@ -91,6 +91,13 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     }
     
     // MARK: - Private
+    
+    private static func temporaryFolder(parentSuite: TestSuite) -> URL {
+        let run = parentSuite.parentRun.plistURL.lastPathComponent.deletingFileExtension
+        let suite = parentSuite.name
+        
+        return URL(fileURLWithPath: "/tmp/sbtuitestbrowser/").appendingPathComponent(run).appendingPathComponent(suite)
+    }
     
     private func actions(from dicts: [[String : Any]], parentAction: TestAction?, parentTest: Test) -> [TestAction] {
         var ret = [TestAction]()
