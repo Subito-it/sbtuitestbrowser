@@ -253,7 +253,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
             let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
             
-            let findCmd = "find \(url.path) -name *.crash"
+            let findCmd = "find \"\(url.path)\" -name *.crash"
             let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
             
             let diagnosticReportTimeIntervals = zip(diagnosticReportUrls, diagnosticReportUrls.map { self.diagnosticReportTimeInterval(at: $0)} )
