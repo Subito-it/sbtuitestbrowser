@@ -26,7 +26,7 @@ var baseFolderURL: URL?
 
 for argument in CommandLine.arguments.dropFirst() {
     let path = NSString(string: argument).expandingTildeInPath
-    baseFolderURL = URL(string: path)
+    baseFolderURL = URL(fileURLWithPath: path)
 }
 guard let baseFolderURL = baseFolderURL else {
     print("Missing basefolder")
@@ -61,7 +61,7 @@ routes.add(method: .get, uri: "/static/**", handler: {
     request, response in
     
     request.path = request.urlVariables[routeTrailingWildcardKey] ?? "" // get the portion of the request path which was matched by the wildcard
-    StaticFileHandler(documentRoot: baseFolderURL.absoluteString).handleRequest(request: request, response: response)
+    StaticFileHandler(documentRoot: baseFolderURL.path).handleRequest(request: request, response: response)
 })
 
 // Add our routes.
