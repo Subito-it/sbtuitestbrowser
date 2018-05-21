@@ -47,8 +47,6 @@ class TestAction: Hashable, Equatable {
         self.parentAction = parentAction
         self.parentTest = parentTest
         
-
-
         if let attachments: Array<Dictionary<String, Any>> = dict["Attachments"] as? Array<Dictionary<String, Any>>,
                 let attachment = attachments.first, // we get only first
                 let filename = attachment["Filename"] {
