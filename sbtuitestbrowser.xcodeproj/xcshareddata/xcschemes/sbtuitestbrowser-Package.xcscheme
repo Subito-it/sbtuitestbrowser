@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "9999"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "sbtuitestbrowser::sbtuitestbrowser"
-               BuildableName = "sbtuitestbrowser"
-               BlueprintName = "sbtuitestbrowser"
+               BlueprintIdentifier = "PerfectNet::PerfectNet"
+               BuildableName = "PerfectNet.framework"
+               BlueprintName = "PerfectNet"
                ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,9 +42,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "PerfectHTTPServer::PerfectCHTTPParser"
-               BuildableName = "PerfectCHTTPParser.framework"
-               BlueprintName = "PerfectCHTTPParser"
+               BlueprintIdentifier = "PerfectLib::PerfectLib"
+               BuildableName = "PerfectLib.framework"
+               BlueprintName = "PerfectLib"
                ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -56,65 +56,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "PerfectHTTPServer::PerfectCZlib"
+               BlueprintIdentifier = "sbtuitestbrowser::sbtuitestbrowser"
+               BuildableName = "sbtuitestbrowser"
+               BlueprintName = "sbtuitestbrowser"
+               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "PerfectCZlib::PerfectCZlib"
                BuildableName = "PerfectCZlib.framework"
                BlueprintName = "PerfectCZlib"
-               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "PerfectHTTP::PerfectHTTP"
-               BuildableName = "PerfectHTTP.framework"
-               BlueprintName = "PerfectHTTP"
-               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "PerfectNet::PerfectNet"
-               BuildableName = "PerfectNet.framework"
-               BlueprintName = "PerfectNet"
-               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "PerfectCrypto::PerfectCrypto"
-               BuildableName = "PerfectCrypto.framework"
-               BlueprintName = "PerfectCrypto"
-               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "COpenSSL::COpenSSL"
-               BuildableName = "COpenSSL.framework"
-               BlueprintName = "COpenSSL"
                ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -140,9 +98,51 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "PerfectLib::PerfectLib"
-               BuildableName = "PerfectLib.framework"
-               BlueprintName = "PerfectLib"
+               BlueprintIdentifier = "PerfectHTTPServer::PerfectCHTTPParser"
+               BuildableName = "PerfectCHTTPParser.framework"
+               BlueprintName = "PerfectCHTTPParser"
+               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "PerfectHTTP::PerfectHTTP"
+               BuildableName = "PerfectHTTP.framework"
+               BlueprintName = "PerfectHTTP"
+               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "COpenSSL::COpenSSL"
+               BuildableName = "COpenSSL.framework"
+               BlueprintName = "COpenSSL"
+               ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "PerfectCrypto::PerfectCrypto"
+               BuildableName = "PerfectCrypto.framework"
+               BlueprintName = "PerfectCrypto"
                ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -171,9 +171,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "sbtuitestbrowser::sbtuitestbrowser"
-            BuildableName = "sbtuitestbrowser"
-            BlueprintName = "sbtuitestbrowser"
+            BlueprintIdentifier = "PerfectNet::PerfectNet"
+            BuildableName = "PerfectNet.framework"
+            BlueprintName = "PerfectNet"
             ReferencedContainer = "container:sbtuitestbrowser.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

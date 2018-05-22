@@ -47,7 +47,11 @@ class TestAction: Hashable, Equatable {
         self.parentAction = parentAction
         self.parentTest = parentTest
         
-        if (dict["HasScreenshotData"] as? Bool) == true {
+        if let attachments = dict["Attachments"] as? [[String: Any]],
+                let attachment = attachments.first, // we get only first
+                let filename = attachment["Filename"] {
+            self.screenshotPath = "\(screenshotBasePath)/Attachments/\(filename)"
+        } else if (dict["HasScreenshotData"] as? Bool) == true {
             self.screenshotPath = "\(screenshotBasePath)/Attachments/Screenshot_\(self.uuid).jpg"
         } else {
             self.screenshotPath = nil
