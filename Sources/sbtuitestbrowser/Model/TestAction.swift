@@ -47,7 +47,7 @@ class TestAction: Hashable, Equatable {
         self.parentAction = parentAction
         self.parentTest = parentTest
         
-        if let attachments: Array<Dictionary<String, Any>> = dict["Attachments"] as? Array<Dictionary<String, Any>>,
+        if let attachments = dict["Attachments"] as? [[String: Any]],
                 let attachment = attachments.first, // we get only first
                 let filename = attachment["Filename"] {
             self.screenshotPath = "\(screenshotBasePath)/Attachments/\(filename)"
