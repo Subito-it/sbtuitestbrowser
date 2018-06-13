@@ -232,6 +232,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.repoBasePath = dict["RepoPath"] as? String
         
         let deviceName = extractSimulatorName(from: dict)
+        let deviceId = extractSimulatorId(from: dict)
         let testsDict = extractTestableSummaries(from: dict)
         
         let runSuites = suites(from: testsDict).map {
@@ -256,16 +257,18 @@ class TestRun: ListItem, FailableItem, Equatable {
             let findCmd = "find \"\(url.path)\" -name *.crash"
             let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
             
-            let diagnosticReportTimeIntervals = zip(diagnosticReportUrls, diagnosticReportUrls.map { self.diagnosticReportTimeInterval(at: $0)} )
+            let diagnosticReports = diagnosticReportUrls.map { (url: $0, timeInterval: self.diagnosticReportTimeInterval(at: $0), path: self.diagnosticReportPath(at: $0)) }
             
             // Try to match diagnostic reports
             for test in self.allTests() {
                 let start = test.startTimeinterval
                 let stop = test.stopTimeinterval
                 
-                for diagnosticReportTimeInterval in diagnosticReportTimeIntervals {
-                    if (diagnosticReportTimeInterval.1 > start) && (diagnosticReportTimeInterval.1 < stop + 1.0) {
-                        test.diagnosticReportUrl = diagnosticReportTimeInterval.0
+                for diagnosticReport in diagnosticReports {
+                    if diagnosticReport.timeInterval > start,
+                       diagnosticReport.timeInterval < stop + 1.0,
+                       diagnosticReport.path.contains(deviceId) {
+                        test.diagnosticReportUrl = diagnosticReport.url
                     }
                 }
             }
@@ -288,6 +291,17 @@ class TestRun: ListItem, FailableItem, Equatable {
         }
         
         return 0
+    }
+    
+    private func diagnosticReportPath(at url: URL) -> String {
+        guard let report = try? String(contentsOf: url, encoding: .utf8) else {
+            return ""
+        }
+        
+        let pathMarker = "Path:"
+        let lines = report.split(separator: "\n")
+        
+        return String(lines.first(where: { $0.contains(pathMarker) }) ?? "")
     }
     
     private func suites(from dicts: [[String : Any]]) -> [TestSuite] {
@@ -344,6 +358,17 @@ class TestRun: ListItem, FailableItem, Equatable {
         
         // for the time being we just extract the device name
         return "\(modelName) (\(modelVersion))"
+    }
+    
+    private func extractSimulatorId(from dict: [String : Any]?) -> String {
+        guard let dict = dict?["RunDestination"] as? [String : Any] else {
+            fatalError("No RunDestination?")
+        }
+        guard let targetDevice = dict["TargetDevice"] as? [String : Any] else {
+            fatalError("Unsupported RunDestination format, TargetDevice")
+        }
+        
+        return (targetDevice["Identifier"] as? String) ?? ""
     }
     
     private func extractTestableSummaries(from dict: [String : Any]?) -> [[String : Any]] {
