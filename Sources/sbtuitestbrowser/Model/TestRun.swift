@@ -26,6 +26,7 @@ class TestRun: ListItem, FailableItem, Equatable {
     var branchName: String?
     var commitHash: String?
     var commitMessage: String?
+    var customDescrition: String?
     var codeCoveragePath: String?
     var repoBasePath: String?
     
@@ -69,14 +70,22 @@ class TestRun: ListItem, FailableItem, Equatable {
     }
     
     public func displayName() -> String {
+        var ret = [String]()
         switch (branchName, commitHash) {
         case (let branchName?, let commitHash?):
-            return "[\(branchName)] \(commitHash) - \(deviceName)"
+            ret.append("[\(branchName)] \(commitHash)")
         case (let branchName?, _):
-            return "[\(branchName)] - \(deviceName)"
+            ret.append("[\(branchName)]")
         default:
-            return "\(createdString()) - \(deviceName)"
+            ret.append("\(createdString())")
         }
+        
+        if let customDescrition = customDescrition {
+            ret.append(customDescrition)
+        }
+        ret.append(deviceName)
+        
+        return ret.joined(separator: " - ")
     }
     
     public func createdDate() -> Date? {
@@ -228,6 +237,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.commitHash = dict["CommitHash"] as? String
         self.commitMessage = dict["CommitMessage"] as? String
         self.codeCoveragePath = dict["CodeCoverageFile"] as? String
+        self.customDescrition = dict["CustomDescription"] as? String
         self.groupIdentifier = dict["GroupingIdentifier"] as? String
         self.repoBasePath = dict["RepoPath"] as? String
         

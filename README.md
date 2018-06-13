@@ -36,6 +36,7 @@ Besides the aforementioned `GroupingIdentifier` key there are additional custom 
 
 - `RepoPath`: The path where source code of the project being tested is located.
 - `BranchName`: The branch name from where tests were launched. This information will be shown in the test runs homepage.
+- `CustomDescription`: A custom text that will be shown in the test runs homepage.
 - `CommitHash`: The hash of the commit from where tests were launched. This information will be shown in the test runs homepage.
 - `CommitMessage`: The message of the commit from where tests were launched. This information will be shown in the test runs homepage when hovering over a test run.
 - `CodeCoverageFile`: The path to the code coverage file to show code coverage information of a particular test run. **Requires `RepoPath` to be set**.
