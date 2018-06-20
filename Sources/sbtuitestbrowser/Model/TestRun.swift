@@ -207,26 +207,23 @@ class TestRun: ListItem, FailableItem, Equatable {
     
     // MARK: - Private
     
-    private func read(plist url: URL) -> [String : Any]? {
+    private func read(plist url: URL) throws -> [String : Any] {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
         var plistData: [String: Any] = [:]
-        guard let plistXML = try? Data(contentsOf: self.plistURL) else {
-            return nil
-        }
         
-        do {
-            plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String: Any]
-        } catch {
-            print("Error reading plist: \(error)")
-            return nil
-        }
+        let plistXML = try Data(contentsOf: self.plistURL)
+        
+        plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String: Any]
         
         return plistData
     }
     
     private func parse() {
-        guard let dict = read(plist: self.plistURL) else {
-            fatalError("Failed to load dictionary")
+        let dict: [String : Any]
+        do {
+            dict = try read(plist: self.plistURL)
+        } catch let error {
+            fatalError("Failed to load dictionary \(self.plistURL) error: \(error)")
         }
 
         guard extract(formatVersion: dict) == "1.2" else {
