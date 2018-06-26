@@ -40,7 +40,7 @@ class TestAttachment {
         case .crashlog:
             self.title = title ?? "Diagnostic report"
         case .text:
-            self.title = title ?? "Text attachment"
+            self.title = title ?? "String attachment"
         default:
             self.title = title ?? "Attachment"
         }

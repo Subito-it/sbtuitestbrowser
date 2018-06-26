@@ -118,9 +118,9 @@ extension RouteHandler {
                     }
                     response.appendBody(string: "<br /><br /><a href='/static\(attachment.path)'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static\(attachment.path)' /></a><br /><br />")
                 case .crashlog:
-                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=red>Crashlog</font></b></a><br /><br />")
+                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=red>\(attachment.title)</font></b></a><br /><br />")
                 default:
-                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=blue>Attachment</font></b></a><br /><br />")
+                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=blue>\(attachment.title)</font></b></a><br /><br />")
                 }
             }
         }
