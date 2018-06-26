@@ -22,7 +22,7 @@ class TestAction: Hashable, Equatable {
     let name: String
     let uuid: String
     let failed: Bool
-    let screenshotPath: String?
+    let attachments: [TestAttachment]?
     let startTimeinterval: TimeInterval
     let stopTimeinterval: TimeInterval
     let duration: TimeInterval
@@ -31,7 +31,7 @@ class TestAction: Hashable, Equatable {
     
     private(set) var subActions = [TestAction]()
     
-    init(dict: [String : Any], parentAction: TestAction?, parentTest: Test, screenshotBasePath: String) {
+    init(dict: [String : Any], parentAction: TestAction?, parentTest: Test, attachmentBasePath: String) {
         let actionName = dict["Title"] as! String
         self.name = actionName
         self.uuid = dict["UUID"] as! String
@@ -47,14 +47,15 @@ class TestAction: Hashable, Equatable {
         self.parentAction = parentAction
         self.parentTest = parentTest
         
-        if let attachments = dict["Attachments"] as? [[String: Any]],
-                let attachment = attachments.first, // we get only first
-                let filename = attachment["Filename"] {
-            self.screenshotPath = "\(screenshotBasePath)/Attachments/\(filename)"
+        if let attachments = dict["Attachments"] as? [[String: Any]] {
+            self.attachments = attachments.compactMap {
+                guard let filename = $0["Filename"] as? String else { return nil }
+                return TestAttachment(title: $0["Name"] as? String, path: "\(attachmentBasePath)/Attachments/\(filename)")
+            }
         } else if (dict["HasScreenshotData"] as? Bool) == true {
-            self.screenshotPath = "\(screenshotBasePath)/Attachments/Screenshot_\(self.uuid).jpg"
+            self.attachments = [TestAttachment(title: "Screenshot", path: "\(attachmentBasePath)/Attachments/Screenshot_\(self.uuid).jpg")]
         } else {
-            self.screenshotPath = nil
+            self.attachments = nil
         }
         
         self.failed = self.parentTest.failures.filter({ actionName.contains($0.message) && actionName.contains(":\($0.lineNumber)") && actionName.contains($0.fileName.count > 0 ? $0.fileName : " ") }).count > 0
@@ -62,6 +63,11 @@ class TestAction: Hashable, Equatable {
     
     public func add(_ subAction: TestAction) {
         subActions.append(subAction)
+    }
+    
+    public func hasAttachment() -> Bool {
+        guard let attachments = attachments else { return false }
+        return attachments.count > 0
     }
     
     // MARK: - Protocols

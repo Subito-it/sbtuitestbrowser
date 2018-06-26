@@ -56,11 +56,13 @@ routes.add(method: .get, uri: "/details/{runplist}/{suitename}/{testname}/{actio
 routes.add(method: .get, uri: "/coverage/{runplist}", handler: routeHandler.coverageHomeHandler)
 routes.add(method: .get, uri: "/coverage/{runplist}/{filepath}", handler: routeHandler.coverageFileHandler)
 routes.add(method: .get, uri: "/diagnostic_report/{runplist}/{suitename}/{testname}", handler: routeHandler.diagnosticReportHandler)
+routes.add(method: .get, uri: "/attachment/{runplist}/{suitename}/{testname}/{attachmentpath}", handler: routeHandler.attachmentHandler)
+routes.add(method: .get, uri: "/attachment/{runplist}/{suitename}/{testname}/{actionuuid}/{attachmentpath}", handler: routeHandler.attachmentHandler)
 
 routes.add(method: .get, uri: "/static/**", handler: {
     request, response in
     
-    request.path = request.urlVariables[routeTrailingWildcardKey] ?? "" // get the portion of the request path which was matched by the wildcard
+    request.path = request.urlVariables[routeTrailingWildcardKey]?.removingPercentEncoding ?? "" // get the portion of the request path which was matched by the wildcard
     StaticFileHandler(documentRoot: baseFolderURL.path).handleRequest(request: request, response: response)
 })
 

@@ -20,7 +20,7 @@ import Foundation
 
 class TestRun: ListItem, FailableItem, Equatable {
     let plistURL: URL
-    let screenshotBasePath: String
+    let attachmentBasePath: String
     var id: String { return plistURL.lastPathComponent }
     var groupIdentifier: String?
     var branchName: String?
@@ -40,24 +40,24 @@ class TestRun: ListItem, FailableItem, Equatable {
     private(set) var suites = [TestSuite]()
     private(set) var coverage: TestCoverage?
     
-    init(plistURL: URL, screenshotBaseURL: URL) {
+    init(plistURL: URL, attachmentBaseURL: URL) {
         self.plistURL = plistURL
         
         let basePath = plistURL.deletingLastPathComponent().path
        
-        self.screenshotBasePath = basePath.replacingOccurrences(of: screenshotBaseURL.path, with: "")
+        self.attachmentBasePath = basePath.replacingOccurrences(of: attachmentBaseURL.path, with: "")
         super.init()
         self.parse()
     }
     
-    static func parse(plists: [URL], screenshotBaseURL: URL, partialRun: @escaping (TestRun, Double) -> Void ) -> [TestRun] {
+    static func parse(plists: [URL], attachmentBaseURL: URL, partialRun: @escaping (TestRun, Double) -> Void ) -> [TestRun] {
         var runs = [TestRun]()
         
         let synchQueue = DispatchQueue(label: "com.synch.parse")
         // parallel enumeration
         (plists as NSArray).enumerateObjects(options: .concurrent, using: { (obj, idx, stop) -> Void in
             autoreleasepool {
-                let run = TestRun(plistURL: obj as! URL, screenshotBaseURL: screenshotBaseURL)
+                let run = TestRun(plistURL: obj as! URL, attachmentBaseURL: attachmentBaseURL)
                 
                 synchQueue.async {
                     runs.append(run)

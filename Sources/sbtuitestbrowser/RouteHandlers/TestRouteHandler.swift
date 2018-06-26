@@ -84,13 +84,28 @@ extension RouteHandler {
                         lastParentAction = action.parentAction
                         paddingLeft += 20
                     }
-                    
+
                     let durationString = action.duration >= 0.01 ? "\(String(format: " %.2f", action.duration))s" : ""
                     
-                    response.appendBody(string: "<a href='/details/\(run.id)/\(suiteName)/\(test.name)/\(action.uuid)' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
-                    
-                    if let screenshotPath = action.screenshotPath, showScreeshots == true {
-                        response.appendBody(string: "<br /><a href='/static\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static\(screenshotPath)' /></a><br />")
+                    let attachmentPrefix = action.hasAttachment() ? "<b>🗃 " : ""
+                    let attachmentSuffix = action.hasAttachment() ? "</b>" : ""
+
+                    response.appendBody(string: "<a href='/details/\(run.id)/\(suiteName)/\(test.name)/\(action.uuid)' style='color:\(color); padding-left: \(paddingLeft)px'>\(attachmentPrefix)\(action.name)\(attachmentSuffix)</a><font color=\"#ff9900\">\(durationString)</font><br>")
+
+                    for attachment in action.attachments ?? [] {
+                        switch attachment.type {
+                        case .image:
+                            if showScreeshots {
+                                if !attachment.isAutomaticScreenshot {
+                                    response.appendBody(string: "<br /><b>\(attachment.title)</b></br>")
+                                }
+                                response.appendBody(string: "<br /><a href='/static\(attachment.path)'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static\(attachment.path)' /></a><br /><br />")
+                            }
+                        case .crashlog:
+                            response.appendBody(string: "<br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(attachment.encodedPath())'><b><font color=red>Crashlog</font></b></a><br /><br />")
+                        default:
+                            response.appendBody(string: "<br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(attachment.encodedPath())'><b><font color=blue>Attachment</font></b></a><br /><br />")
+                        }
                     }
                 }
             } else {

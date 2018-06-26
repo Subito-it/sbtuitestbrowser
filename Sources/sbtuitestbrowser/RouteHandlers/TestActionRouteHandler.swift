@@ -52,7 +52,7 @@ extension RouteHandler {
         
         for action in testActions {
             if actionFound {
-                if targetAction.screenshotPath != nil || nextAction?.screenshotPath != nil {
+                if targetAction.attachments?.count != 0 || nextAction?.attachments?.count != 0 {
                     nextAction = action
                     break
                 }
@@ -72,7 +72,7 @@ extension RouteHandler {
                 actionFound = true
             }
             
-            if action.screenshotPath != nil {
+            if action.attachments?.count != 0 {
                 if !actionFound {
                     previousAction = action
                     selectedSubactions.removeAll()
@@ -110,8 +110,18 @@ extension RouteHandler {
                 response.appendBody(string: "<a href='#' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
             }
             
-            if let screenshotPath = selectedSubactions.last?.0.screenshotPath {
-                response.appendBody(string: "<br /><br /><a href='/static\(screenshotPath)'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static\(screenshotPath)' /></a><br />")
+            for attachment in selectedSubactions.last?.0.attachments ?? [] {
+                switch attachment.type {
+                case .image:
+                    if !attachment.isAutomaticScreenshot {
+                        response.appendBody(string: "<br /><b>\(attachment.title)</b></br>")
+                    }
+                    response.appendBody(string: "<br /><br /><a href='/static\(attachment.path)'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static\(attachment.path)' /></a><br /><br />")
+                case .crashlog:
+                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=red>Crashlog</font></b></a><br /><br />")
+                default:
+                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=blue>Attachment</font></b></a><br /><br />")
+                }
             }
         }
         

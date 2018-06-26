@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C342057B20E274350013C0F9 /* AttachmentRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C342057A20E274350013C0F9 /* AttachmentRouteHandler.swift */; };
+		C342057E20E292050013C0F9 /* TestAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C342057D20E292050013C0F9 /* TestAttachment.swift */; };
 		OBJ_403 /* a_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_134 /* a_.c */; };
 		OBJ_404 /* aes_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_135 /* aes_.c */; };
 		OBJ_405 /* ameth_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_136 /* ameth_lib.c */; };
@@ -586,6 +588,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C342057A20E274350013C0F9 /* AttachmentRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentRouteHandler.swift; sourceTree = "<group>"; };
+		C342057D20E292050013C0F9 /* TestAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttachment.swift; sourceTree = "<group>"; };
 		"COpenSSL::COpenSSL::Product" /* COpenSSL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = COpenSSL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
 		OBJ_101 /* HTTPFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPFilter.swift; sourceTree = "<group>"; };
@@ -1380,6 +1384,7 @@
 				OBJ_23 /* TestFailure.swift */,
 				OBJ_24 /* TestRun.swift */,
 				OBJ_25 /* TestSuite.swift */,
+				C342057D20E292050013C0F9 /* TestAttachment.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1387,6 +1392,7 @@
 		OBJ_26 /* RouteHandlers */ = {
 			isa = PBXGroup;
 			children = (
+				C342057A20E274350013C0F9 /* AttachmentRouteHandler.swift */,
 				OBJ_27 /* CoverageFileRouteHandler.swift */,
 				OBJ_28 /* CoverageHomeRouteHandler.swift */,
 				OBJ_29 /* DiagnosticReportRouteHandler.swift */,
@@ -1525,7 +1531,7 @@
 			path = HTTP11;
 			sourceTree = "<group>";
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -1536,7 +1542,6 @@
 				OBJ_45 /* Dependencies */,
 				OBJ_387 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_51 /* HTTP2 */ = {
@@ -1999,7 +2004,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_387 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2465,6 +2470,7 @@
 				OBJ_848 /* HTTPRequest+Extension.swift in Sources */,
 				OBJ_849 /* HTTPResponse+Extension.swift in Sources */,
 				OBJ_850 /* NSTimeInterval+Extension.swift in Sources */,
+				C342057B20E274350013C0F9 /* AttachmentRouteHandler.swift in Sources */,
 				OBJ_851 /* Sequence+QueryString.swift in Sources */,
 				OBJ_852 /* String+Shell.swift in Sources */,
 				OBJ_853 /* TimeInterval+String.swift in Sources */,
@@ -2484,6 +2490,7 @@
 				OBJ_867 /* ParseRouteHandler.swift in Sources */,
 				OBJ_868 /* ResetRouteHandler.swift in Sources */,
 				OBJ_869 /* RouteHandler.swift in Sources */,
+				C342057E20E292050013C0F9 /* TestAttachment.swift in Sources */,
 				OBJ_870 /* RunRouteHandler.swift in Sources */,
 				OBJ_871 /* StatusRouteHandler.swift in Sources */,
 				OBJ_872 /* SuiteRouteHandler.swift in Sources */,
