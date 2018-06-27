@@ -110,17 +110,20 @@ extension RouteHandler {
                 response.appendBody(string: "<a href='#' style='color:\(color); padding-left: \(paddingLeft)px'>\(action.name)</a><font color=\"#ff9900\">\(durationString)</font><br>")
             }
             
+            let attachmentPrefix = "<b>🗃 "
+            let attachmentSuffix = "</b>"
+            
             for attachment in selectedSubactions.last?.0.attachments ?? [] {
                 switch attachment.type {
                 case .image:
                     if !attachment.isAutomaticScreenshot {
                         response.appendBody(string: "<br /><b>\(attachment.title)</b></br>")
                     }
-                    response.appendBody(string: "<br /><br /><a href='/static\(attachment.path)'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static\(attachment.path)' /></a><br /><br />")
-                case .crashlog:
-                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=red>\(attachment.title)</font></b></a><br /><br />")
-                default:
-                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.encodedPath())'><b><font color=blue>\(attachment.title)</font></b></a><br /><br />")
+                    response.appendBody(string: "<br /><br /><a href='/static64/\(attachment.base64())'><img style='margin-top:-10px; padding-bottom:20px; width: 25%' src='/static64/\(attachment.base64())' /></a><br /><br />")
+                case .plist, .other:
+                    response.appendBody(string: "<br /><br /><a href='/static64/\(attachment.base64())'><b>\(attachmentPrefix)\(attachment.title)\(attachmentSuffix)</b></a><br /><br />")
+                case .crashlog, .text:
+                    response.appendBody(string: "<br /><br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.base64())'><b><font color=red>\(attachmentPrefix)\(attachment.title)\(attachmentSuffix)</font></b></a><br /><br />")
                 }
             }
         }

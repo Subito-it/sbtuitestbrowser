@@ -36,12 +36,12 @@ extension RouteHandler {
         
         response.wrapDefaultFont() {
             let showErrorsOnly = request.paramBoolValue(name: "errors_only")
-            let showScreeshots = request.paramBoolValue(name: "screenshots")
+            let showScreenshots = request.paramBoolValue(name: "screenshots")
             
             let paramDict = request.queryParamsDict
             let queryParametersWithToggledScreenshots = paramDict.toggle(key: "screenshots").queryString()
             
-            let screenshotLink = test.hasScreenshots() ? "<a href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)'>\(showScreeshots ? "Hide screenshots" : "Show screenshots")</a>" : "&nbsp;"
+            let screenshotLink = test.hasScreenshots() ? "<a href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)'>\(showScreenshots ? "Hide screenshots" : "Show screenshots")</a>" : "&nbsp;"
             
             let queryParameters = paramDict.queryString()
             response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.displayName())</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a>",
@@ -87,7 +87,7 @@ extension RouteHandler {
 
                     let durationString = action.duration >= 0.01 ? "\(String(format: " %.2f", action.duration))s" : ""
                     
-                    let attachmentPrefix = action.hasAttachment() ? "<b>🗃 " : ""
+                    let attachmentPrefix = action.hasAttachment() ? (action.hasScreenshot() ?  "<b>🖼 " : "<b>🗃 ") : ""
                     let attachmentSuffix = action.hasAttachment() ? "</b>" : ""
 
                     response.appendBody(string: "<a href='/details/\(run.id)/\(suiteName)/\(test.name)/\(action.uuid)' style='color:\(color); padding-left: \(paddingLeft)px'>\(attachmentPrefix)\(action.name)\(attachmentSuffix)</a><font color=\"#ff9900\">\(durationString)</font><br>")
@@ -95,16 +95,16 @@ extension RouteHandler {
                     for attachment in action.attachments ?? [] {
                         switch attachment.type {
                         case .image:
-                            if showScreeshots {
+                            if showScreenshots {
                                 if !attachment.isAutomaticScreenshot {
                                     response.appendBody(string: "<br /><b>\(attachment.title)</b></br>")
                                 }
-                                response.appendBody(string: "<br /><a href='/static\(attachment.path)'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static\(attachment.path)' /></a><br /><br />")
+                                response.appendBody(string: "<br /><a href='/static64/\(attachment.base64())'><img style='margin-top:-10px; padding-bottom:20px; padding-left: \(paddingLeft)px; width: 100px' src='/static64/\(attachment.base64())' /></a><br /><br />")
                             }
-                        case .crashlog:
-                            response.appendBody(string: "<br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(attachment.encodedPath())'><b><font color=red>\(attachment.title)</font></b></a><br /><br />")
-                        default:
-                            response.appendBody(string: "<br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(attachment.encodedPath())'><b><font color=blue>\(attachment.title)</font></b></a><br /><br />")
+                        case .plist, .other:
+                            response.appendBody(string: "<br /><a href='/static64/\(attachment.base64())'>\(attachmentPrefix)\(attachment.title)\(attachmentSuffix)</a><br /><br />")
+                        case .crashlog, .text:
+                            response.appendBody(string: "<br /><a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(attachment.base64())'><b><font color=red>\(attachmentPrefix)\(attachment.title)\(attachmentSuffix)</font></b></a><br /><br />")
                         }
                     }
                 }

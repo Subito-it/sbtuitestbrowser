@@ -12,6 +12,7 @@ class TestAttachment {
         case image
         case crashlog
         case text
+        case plist
         case other
     }
     
@@ -30,6 +31,8 @@ class TestAttachment {
             self.type = .crashlog
         case "txt":
             self.type = .text
+        case "plist":
+            self.type = .plist
         default:
             self.type = .other
         }
@@ -41,14 +44,16 @@ class TestAttachment {
             self.title = title ?? "Diagnostic report"
         case .text:
             self.title = title ?? "String attachment"
+        case .plist:
+            self.title = title ?? "Plist attachment"
         default:
             self.title = title ?? "Attachment"
         }
         
-        self.isAutomaticScreenshot = path.hasPrefix("Screenshot_") && path.filePathExtension == "jpg"
+        self.isAutomaticScreenshot = title?.hasPrefix("kXCTAttachment") == true && title?.hasSuffix("ScreenImageData") == true
     }
     
-    func encodedPath() -> String {
-        return self.path.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? self.path
+    func base64() -> String {
+        return self.path.data(using: .utf8)?.base64EncodedString() ?? ""
     }
 }

@@ -59,11 +59,24 @@ routes.add(method: .get, uri: "/diagnostic_report/{runplist}/{suitename}/{testna
 routes.add(method: .get, uri: "/attachment/{runplist}/{suitename}/{testname}/{attachmentpath}", handler: routeHandler.attachmentHandler)
 routes.add(method: .get, uri: "/attachment/{runplist}/{suitename}/{testname}/{actionuuid}/{attachmentpath}", handler: routeHandler.attachmentHandler)
 
-routes.add(method: .get, uri: "/static/**", handler: {
-    request, response in
-    
-    request.path = request.urlVariables[routeTrailingWildcardKey]?.removingPercentEncoding ?? "" // get the portion of the request path which was matched by the wildcard
+routes.add(method: .get, uri: "/static/**", handler: { request, response in
+    request.path = request.urlVariables[routeTrailingWildcardKey] ?? ""
     StaticFileHandler(documentRoot: baseFolderURL.path).handleRequest(request: request, response: response)
+})
+
+routes.add(method: .get, uri: "/static64/**", handler: { request, response in
+    if let path64 = request.urlVariables[routeTrailingWildcardKey]?.replacingOccurrences(of: " ", with: "+").replacingOccurrences(of: "/", with: ""),
+       let pathData = Data(base64Encoded: path64),
+       let path = String(data: pathData, encoding: .utf8) {
+        // Since Xcode10 folder containing attachments might contain '+'. This causes problems since the plus sign gets translated to " " by PerfectLib
+        // We move the part containing to the documentRoot to workaround the issue
+        let filename = path.lastFilePathComponent
+        let prePath = path.deletingLastFilePathComponent
+        request.path = filename
+        response.addHeader(.contentDisposition, value: "attachment; filename=\"\(filename)\"")
+        
+        StaticFileHandler(documentRoot: baseFolderURL.appendingPathComponent(prePath).path).handleRequest(request: request, response: response)
+    }
 })
 
 // Add our routes.

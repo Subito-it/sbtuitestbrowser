@@ -39,7 +39,9 @@ extension RouteHandler {
                 return
         }
         
-        guard let attachmentPath = request.urlVariables["attachmentpath"] else {
+        guard let attachmentPathB64 = request.urlVariables["attachmentpath"]?.replacingOccurrences(of: " ", with: "+"),
+              let attachmentPathData = Data(base64Encoded: attachmentPathB64),
+            let attachmentPath = String(data: attachmentPathData, encoding: .utf8) else {
             response.appendBody(string: h3("Error! Attachment #1"))
             response.completed()
             return

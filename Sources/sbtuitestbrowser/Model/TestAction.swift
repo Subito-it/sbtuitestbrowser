@@ -70,6 +70,13 @@ class TestAction: Hashable, Equatable {
         return attachments.count > 0
     }
     
+    public func hasScreenshot() -> Bool {
+        guard let attachments = attachments, attachments.count == 1 else { return false }
+        guard let attachment = attachments.first else { return false }
+        
+        return attachment.isAutomaticScreenshot
+    }
+    
     // MARK: - Protocols
     
     var hashValue: Int { return uuid.hashValue }
