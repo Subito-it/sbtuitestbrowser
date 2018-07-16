@@ -45,29 +45,45 @@ extension RouteHandler {
             return
         }
         
-        response.wrapDefaultFont() {
-            let paramDict = request.queryParamsDict
-            
-            let queryParameters = paramDict.queryString()
+        let paramDict = request.queryParamsDict
+        let queryParameters = paramDict.queryString()
+        
+        let htmlPage = HTMLPage(title: "UI Test Browser - Diagnostic report")
+        
+        htmlPage.div(id: "header") {
+            htmlPage.div(class: "centered") {
+                htmlPage.button("Home", link: "/\(queryParameters)")
+                htmlPage.append(body: "・&nbsp;")
+                htmlPage.button("Run summary", link: "/details/\(run.id)\(queryParameters)")
+                htmlPage.append(body: "・&nbsp;")
+                htmlPage.button("Suite summary", link: "/details/\(run.id)/\(suite.name)\(queryParameters)")
+                htmlPage.append(body: "・&nbsp;")
+                htmlPage.button("Test summary", link: "/details/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)")
 
-            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.displayName())</a><br /><a style='padding-left: 40px;' href='/details/\(run.id)/\(suite.name)\(queryParameters)'>\(suite.name)</a><br /><a style='padding-left: 60px;' href='/details/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)'>\(test.name)</a>",
-                centerColumn: "&nbsp;",
-                rightColumn: "&nbsp;")
-            
-            response.appendBody(string: "<hr />")
-            
-            response.appendBody(string: "<h3>")
-            
-            response.threeColumnsBody(leftColumnLink: nil, centerColumn: "<b>diagnostic report</b>", rightColumnLink: nil)
-            
-            response.appendBody(string: "</h3>")
-            
-            let formattedContent = diagnosticReportContent
-                .replacingOccurrences(of: "\n", with: "<br />")
-                .replacingOccurrences(of: "\t", with: "&#09;")
-            
-            response.appendBody(string: formattedContent)
+            }
         }
+        htmlPage.div(id: "header-padding")
+        htmlPage.append(body: """
+                    <script>
+                        $('#header-padding').css('height', $('#header').outerHeight());
+                    </script>
+                """)
+        
+        let testDescription = test.name.dropLast(2)
+        
+        htmlPage.append(body: """
+            <div class='separator'>
+            <b>\(testDescription)</b>
+            </div>
+            """)
+        
+        let formattedContent = diagnosticReportContent
+            .replacingOccurrences(of: "\n", with: "<br />")
+            .replacingOccurrences(of: "\t", with: "&#09;")
+
+        htmlPage.inlineBlock(formattedContent, class: "code")
+        
+        response.appendBody(string: htmlPage.html())
         
         response.completed()
     }

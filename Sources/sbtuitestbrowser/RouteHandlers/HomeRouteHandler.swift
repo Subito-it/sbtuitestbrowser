@@ -22,105 +22,81 @@ import PerfectHTTP
 extension RouteHandler {
     
     public func homeHandler(request: HTTPRequest, _ response: HTTPResponse) {
-        let minRunsForFrequentFail = 3
+        let showErrorsOnly = request.paramBoolValue(name: "errors_only")
+        let paramDict = request.queryParamsDict
+        let queryParametersWithToggledErrors = paramDict.toggle(key: "errors_only").queryString()
+        let queryParameters = paramDict.queryString()
         
-        response.wrapDefaultFont { [weak self] in
-            guard let `self` = self else {
-                return
+        let htmlPage = HTMLPage(title: "UI Test Browser - Home")
+        
+        htmlPage.div(id: "header", class: "centered") {            
+            if self.parsingProgress < 1.0 {
+                htmlPage.button("Parsing results (\(Int(self.parsingProgress * 100))%)", link: "#", class: "button_deselected")
+                htmlPage.append(body: """
+                    <script>
+                        setTimeout(function(){ window.location.reload(1); }, 2000);
+                    </script>
+                """)
+            } else {
+                htmlPage.button("Parse results", link: "#", id: "executeParseRequest")
+                htmlPage.append(body: """
+                    <script>
+                        $('#executeParseRequest').click(function(event) {
+                            event.preventDefault();
+                            $.get( "/parse", function( data ) {
+                                alert( "Parse requested" );
+                                location.reload();
+                            });
+                        });
+                    </script>
+                """)
             }
             
-            let showErrorsOnly = request.paramBoolValue(name: "errors_only")
-            let showErrorsDetails = request.paramBoolValue(name: "errors_details")
-            
-            let paramDict = request.queryParamsDict
-            let queryParametersWithToggledErrors = paramDict.toggle(key: "errors_only").queryString()
-            let errorLink = "<a href='/\(queryParametersWithToggledErrors)'>\(showErrorsOnly ? "Show All" : "Show Errors Only")</a>"
-            
-            response.threeColumnsBody(leftColumn: "<a href='/parse'>parse ui tests results</a>",
-                                      centerColumn: "&nbsp;",
-                                      rightColumn: errorLink)
-            
-            response.appendBody(string: "<hr />")
-            
-            response.threeColumnsBody(leftColumn: h3("Last sessions"),
-                                      centerColumn: "&nbsp;",
-                                      rightColumn: self.parsingProgress < 1.0 ? "<br/><small style='color: red'>parsing in progess (\(Int(self.parsingProgress * 100))%)</small><script>setTimeout(function(){ window.location.reload(1); }, 2000);</script>" : "")
-            
-            let queryParameters = paramDict.queryString()
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .none
-            
-            var lastRunDate: String = ""
-            for run in self.runs {
-                if let runCreateDate = run.createdDate() {
-                    let runDate = dateFormatter.string(from: runCreateDate)
-                    if runDate != lastRunDate {
-                        
-                        response.appendBody(string: "<br /><br />\(h4(runDate, bottomMargin: false))")
-                    }
-                    lastRunDate = runDate
+            let errorButtonClass = showErrorsOnly ? "button_selected" : "button_deselected"
+            htmlPage.button("Only failing", link: "/\(queryParametersWithToggledErrors)", class: errorButtonClass)
+        }
+        htmlPage.div(id: "header-padding")
+        htmlPage.append(body: """
+                    <script>
+                        $('#header-padding').css('height', $('#header').outerHeight());
+                    </script>
+                """)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        
+        var lastRunDate: String = ""
+        for run in self.runs {
+            if let runCreateDate = run.createdDate() {
+                let runDate = dateFormatter.string(from: runCreateDate)
+                if runDate != lastRunDate {
+                    htmlPage.append(body: "<div class='separator'><b>\(runDate)</b></div>")
                 }
-                
-                let hasFailedTest = run.hasFailure() || (run.totalTests(errorsOnly: false) == 0)
-                let hasCrashedTest = run.hasCrashed()
-                let color = hasFailedTest ? "red" : "green"
-                let crash = (hasFailedTest && hasCrashedTest) ? "🚨 " : ""
-                
-                let totalTests = run.totalTests(errorsOnly: showErrorsOnly)
-                let totalTestsFailures = run.totalTests(errorsOnly: true)
-                let failureDescription = totalTestsFailures > 0 ? " | \(totalTestsFailures) failed" : ""
-                let testDescription = showErrorsOnly ? ", \(totalTestsFailures) failed" : "\(totalTests) tests\(failureDescription)"
-                if (!showErrorsOnly || run.totalTests(errorsOnly: true) > 0) {
-                    response.appendBody(string: "\(crash)<a title=\"\(run.commitMessage ?? "")\" href='/details/\(run.id)\(queryParameters)' style='color:\(color)'>\(run.displayName())</a>&nbsp;")
-                    response.appendBody(string: "<font color=\"\(color)\">(\(testDescription))</font>&nbsp;")
-                    response.appendBody(string: "<br />")
-                }
+                lastRunDate = runDate
             }
             
-            if self.parsingProgress == 1.0 {
-                response.appendBody(string: "<br /><br />")
-                response.appendBody(string: "<hr />")
-                
-                var errorDetailLink = ""
-                if self.runs.count >= minRunsForFrequentFail {
-                    let queryParametersWithToggledErrorsDetails = paramDict.toggle(key: "errors_details").queryString()
-                    errorDetailLink = "<a href='/\(queryParametersWithToggledErrorsDetails)'>\(showErrorsDetails ? "Hide Errors Details" : "Show Errors Details")</a>"
-                }
-                
-                response.threeColumnsBody(leftColumn: "<div style='float: left'>\(h3("Frequently failing", bottomMargin: false))<small>Tests that failed consistently in the last \(minRunsForFrequentFail) runs</small></div><br /><br />",
-                    centerColumn: "&nbsp;",
-                    rightColumn: errorDetailLink)
-                
-                response.appendBody(string: "<br /><br />")
-                
-                if self.runs.count < minRunsForFrequentFail {
-                    response.appendBody(string: "Not enough data")
-                } else {
-                    let fFailingTests = self.runs.frequentlyFailingTests(minRunsForFrequentFail: minRunsForFrequentFail)
-                    
-                    var lastSuite = ""
-                    var failingParameters = paramDict
-                    failingParameters["errors_only"] = "1"
-                    let queryParameters = failingParameters.queryString()
-                    for failingTest in fFailingTests {
-                        if failingTest.parentSuite.name != lastSuite {
-                            response.appendBody(string: "<a style='color:red' href='/details/\(failingTest.parentSuite.parentRun.id)/\(failingTest.parentSuite.name)\(queryParameters)'>\(failingTest.parentSuite.name)</a><br />")
-                        }
-                        response.appendBody(string: "<a style='padding-left: 20px; color:red' href='/details/\(failingTest.parentSuite.parentRun.id)/\(failingTest.parentSuite.name)/\(failingTest.name)\(queryParameters)'>\(failingTest.name)</a>")
-                        if showErrorsDetails,
-                            let failedAction = failingTest.firstFailingAction()?.name {
-                            response.appendBody(string: "<div style='padding-left: 40px;color:SlateGrey'><small>\(failedAction)</small></div>")
-                        }
-                        
-                        response.appendBody(string: "<br />")
-                        
-                        lastSuite = failingTest.parentSuite.name
-                    }
+            let hasFailedTest = run.hasFailure() || (run.totalTests(errorsOnly: false) == 0)
+            let hasCrashedTest = run.hasCrashed()
+            let divClass = hasFailedTest ? "failure" : ""
+            let divIcon = hasFailedTest ? HTMLPage.Icons.failure : HTMLPage.Icons.success
+            let crashIcon = (hasFailedTest && hasCrashedTest) ? HTMLPage.Icons.crash : ""
+            
+            let totalTests = run.totalTests(errorsOnly: showErrorsOnly)
+            let totalTestsFailures = run.totalTests(errorsOnly: true)
+            let failureDescription = totalTestsFailures > 0 ? " | \(totalTestsFailures) failed" : ""
+            let testDescription = showErrorsOnly ? "\(totalTestsFailures) failed" : "\(totalTests) tests\(failureDescription)"
+            if (!showErrorsOnly || run.totalTests(errorsOnly: true) > 0) {
+                htmlPage.div(class: "item \(divClass)") {
+                    htmlPage.append(body: crashIcon)
+
+                    let buttonText = "\(run.displayName())<br/><div>\(divIcon) \(testDescription)</div>"
+                    htmlPage.button(buttonText, link: "/details/\(run.id)\(queryParameters)")
                 }
             }
         }
+        
+        response.appendBody(string: htmlPage.html())
         
         response.completed()
     }

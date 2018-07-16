@@ -32,53 +32,80 @@ extension RouteHandler {
                 return
         }
         
-        response.wrapDefaultFont() {
-            let showErrorsOnly = request.paramBoolValue(name: "errors_only")
-            let showErrorsDetails = request.paramBoolValue(name: "errors_details")
-            
-            let paramDict = request.queryParamsDict
-            let queryParametersWithToggledErrors = paramDict.toggle(key: "errors_only").queryString()
-            var errorLink = "<a href='/details/\(run.id)/\(suiteName)\(queryParametersWithToggledErrors)'>\(showErrorsOnly ? "Show All" : "Show Errors Only")</a>"
-            
-            let queryParametersWithToggledErrorsDetails = paramDict.toggle(key: "errors_details").queryString()
-            let errorDetailLink = "<a href='/details/\(run.id)/\(suiteName)\(queryParametersWithToggledErrorsDetails)'>\(showErrorsDetails ? "Hide Errors Details" : "Show Errors Details")</a>"
-            
-            errorLink = "\(errorDetailLink)&nbsp;&nbsp;\(errorLink)"
-            
-            let queryParameters = paramDict.queryString()
-            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)\(queryParameters)'>\(run.displayName())</a>",
-                centerColumn: "&nbsp;",
-                rightColumn: errorLink)
-            response.appendBody(string: "<hr />")
-            
-            response.appendBody(string: "<h3>")
-            if showErrorsOnly {
-                response.threeColumnsBody(leftColumnLink: (suite.previousFailed as? TestSuite)?.name.appending(queryParameters),
-                                          centerColumn: "\(suiteName)<br /><small>\(suite.failingTests().count) of \(suite.tests.count) failed</small>",
-                    rightColumnLink: (suite.nextFailed as? TestSuite)?.name.appending(queryParameters))
-            } else {
-                response.threeColumnsBody(leftColumnLink: (suite.previous as? TestSuite)?.name.appending(queryParameters),
-                                          centerColumn: "\(suiteName)<br /><small>\(suite.failingTests().count) of \(suite.tests.count) failed</small>",
-                    rightColumnLink: (suite.next as? TestSuite)?.name.appending(queryParameters))
+        
+        let showErrorsOnly = request.paramBoolValue(name: "errors_only")
+        let showErrorsDetails = request.paramBoolValue(name: "errors_details")
+        
+        let paramDict = request.queryParamsDict
+        let queryParameters = paramDict.queryString()
+        
+        let queryParametersWithToggledErrors = paramDict.toggle(key: "errors_only").queryString()
+        var errorLink = "<a href='/details/\(run.id)/\(suiteName)\(queryParametersWithToggledErrors)'>\(showErrorsOnly ? "Show All" : "Show Errors Only")</a>"
+        
+        let queryParametersWithToggledErrorsDetails = paramDict.toggle(key: "errors_details").queryString()
+        let errorDetailLink = "<a href='/details/\(run.id)/\(suiteName)\(queryParametersWithToggledErrorsDetails)'>\(showErrorsDetails ? "Hide Errors Details" : "Show Errors Details")</a>"
+        
+        errorLink = "\(errorDetailLink)&nbsp;&nbsp;\(errorLink)"
+        
+        let htmlPage = HTMLPage(title: "UI Test Browser - Home")
+        
+        htmlPage.div(id: "header") {
+            htmlPage.div(class: "centered") {
+                htmlPage.button("Home", link: "/\(queryParameters)")
+                htmlPage.append(body: "・&nbsp;")
+                htmlPage.button("Run summary", link: "/details/\(run.id)\(queryParameters)")
             }
-            response.appendBody(string: "</h3>")
             
-            for test in suite.tests {
-                let color = test.hasFailure() ? "red" : "green"
-                let crash = test.hasCrashed() ? "🚨 " : ""
-                let testHasFailure = test.hasFailure()
-                if !showErrorsOnly || testHasFailure {
-                    response.appendBody(string: "\(crash)<a href='/details/\(run.id)/\(suiteName)/\(test.name)' style='color:\(color)'>\(test.name)</a>")
-                    response.appendBody(string: "&nbsp;\(test.duration.durationString())<br>")
+            if suite.hasFailure() {
+                htmlPage.div(class: "centered") {
+                    let queryParametersWithToggledErrorsDetails = paramDict.toggle(key: "errors_details").queryString()
+                    
+                    let errorButtonClass = showErrorsOnly ? "button_selected" : "button_deselected"
+                    htmlPage.button("Only failing", link: "/details/\(run.id)/\(suiteName)\(queryParametersWithToggledErrors)", class: errorButtonClass)
+                    
+                    let errorDetailButtonClass = showErrorsDetails ? "button_selected" : "button_deselected"
+                    htmlPage.button("Fail details", link: "/details/\(run.id)/\(suiteName)\(queryParametersWithToggledErrorsDetails)", class: errorDetailButtonClass)
+                }
+            }
+        }
+        htmlPage.div(id: "header-padding")
+        htmlPage.append(body: """
+                    <script>
+                        $('#header-padding').css('height', $('#header').outerHeight());
+                    </script>
+                """)
+        
+        htmlPage.append(body: """
+                <div class='separator'>
+                    <b>\(suite.name)</b> done
+                    in \(Int(suite.totalDuration()))s
+                </div>
+            """)
+        
+        for test in suite.tests {
+            let testHasFailure = test.hasFailure()
+            let crashIcon = (testHasFailure && test.hasCrashed()) ? HTMLPage.Icons.crash : ""
+            let divIcon = testHasFailure ? HTMLPage.Icons.failure : HTMLPage.Icons.success
+
+            if !showErrorsOnly || testHasFailure {
+                let divClass = testHasFailure ? "failure" : ""
+                
+                htmlPage.div(class: "item \(divClass)") {
+                    htmlPage.append(body: crashIcon)
+                    
+                    let testName = test.name.dropLast(2)
+                    htmlPage.button("\(divIcon) \(testName) (\(Int(test.duration))s)", link: "/details/\(run.id)/\(suiteName)/\(test.name)")
                     
                     if showErrorsDetails && testHasFailure,
                         let failedAction = test.firstFailingAction()?.name {
-                        response.appendBody(string: "<div style='padding-left: 20px; color:SlateGrey'><small>\(failedAction)</small></div><br />")
+                        let failureDescription = failedAction.unescaped.replacingOccurrences(of: "\n", with: "<br/>")
+                        htmlPage.append(body: "<div style='padding-left: 20px; color:SlateGrey'><small>\(failureDescription)</small></div><br />")
                     }
                 }
             }
         }
         
+        response.appendBody(string: htmlPage.html())
         response.completed()
     }
 }
