@@ -1,4 +1,6 @@
 
+<img src="https://raw.githubusercontent.com/Subito-it/sbtuitestbrowser/master/Images/screenshot.png" />
+
 If you're [running UI Tests using xcodebuild](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/08-automation.html) you probably already know how hard it is to pin point an error when it occurs. The number of log information written in the various folder is so large that it's often easier to run the failing test again in Xcode and check from there what went wrong. This process is tedious and time consuming and often doesn't solve the problem because the test might mysteriously pass when manually run in Xcode.
 
 sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple web interface to help visualize errors faster (some say even better than Xcode).
@@ -17,7 +19,7 @@ Hit run and open your browser at [http://localhost:8090](http://localhost:8090),
 # Usage
 To launch sbtuitestbrowser you only need to specify a base path that contains test session logs (typically xcodebuild's `-derivedDataPath`) of your ui tests sessions.
 
-    sbtuitestbrowser basepath
+    sbtuitestbrowser [basepath]
 
 This starts a web server reachable at [http://localhost:8090](http://localhost:8090) with a very simple and self explanatory interface.
 
