@@ -28,72 +28,88 @@ extension RouteHandler {
             return
         }
         
-        response.wrapDefaultFont() {
-            let showErrorsOnly = request.paramBoolValue(name: "errors_only")
-            let showErrorsDetails = request.paramBoolValue(name: "errors_details")
+        let showErrorsOnly = request.paramBoolValue(name: "errors_only")
+        let showErrorsDetails = request.paramBoolValue(name: "errors_details")
 
-            let paramDict = request.queryParamsDict
-            let queryParametersWithToggledErrors = paramDict.toggle(key: "errors_only").queryString()
-            var errorLink = "<a href='/details/\(run.id)\(queryParametersWithToggledErrors)'>\(showErrorsOnly ? "Show All" : "Show Errors Only")</a>"
-            
-            let queryParametersWithToggledErrorsDetails = paramDict.toggle(key: "errors_details").queryString()
-            let errorDetailLink = "<a href='/details/\(run.id)\(queryParametersWithToggledErrorsDetails)'>\(showErrorsDetails ? "Hide Errors Details" : "Show Errors Details")</a>"
-            
-            errorLink = "\(errorDetailLink)&nbsp;&nbsp;\(errorLink)"
-            
-            let queryParameters = paramDict.queryString()
-            response.threeColumnsBody(leftColumn: "<a href='/\(queryParameters)'>Home</a>",
-                centerColumn: "&nbsp;",
-                rightColumn: errorLink)
-            
-            response.appendBody(string: "<hr />")
-            
-            response.appendBody(string: "<h3>")
-            let coverageColor = "blue"
-            let codeCoverageLink: String
-            if let coverageInfoPath = run.codeCoveragePath,
-               let coverageInfoData = try? Data(contentsOf: URL(fileURLWithPath: coverageInfoPath)),
-               let coverageInfo = (try? JSONSerialization.jsonObject(with: coverageInfoData, options: [])) as? [String: Any],
-               let datas = coverageInfo["data"] as? [[String: Any]],
-               let totalCoverageInfo = datas.first?["totals"] as? [String: Any],
-               let totalCoverageLines = totalCoverageInfo["lines"] as? [String: Any],
-               let totalCoverage = totalCoverageLines["percent"] as? Int {
-                codeCoverageLink = "<br><br><a href='/coverage/\(run.id)' style='color:\(coverageColor)'>code coverage (\(totalCoverage)%)</a><br />&nbsp;"
-            } else {
-                codeCoverageLink = ""
+        let paramDict = request.queryParamsDict
+        let queryParameters = paramDict.queryString()
+        
+        let queryParametersWithToggledErrors = paramDict.toggle(key: "errors_only").queryString()
+        let queryParametersWithToggledErrorsDetails = paramDict.toggle(key: "errors_details").queryString()
+
+        let htmlPage = HTMLPage(title: "UI Test Browser - \(run.displayName())")
+        
+        htmlPage.div(id: "header") {
+            htmlPage.div(class: "centered") {
+                htmlPage.button("Home", link: "/\(queryParameters)")
             }
             
-            if showErrorsOnly {
-                response.threeColumnsBody(leftColumnLink: (run.previousFailed as? TestRun)?.id.appending(queryParameters),
-                                          centerColumn: "\(run.displayName())<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>\(codeCoverageLink)",
-                                          rightColumnLink: (run.nextFailed as? TestRun)?.id.appending(queryParameters))
-            } else {
-                response.threeColumnsBody(leftColumnLink: (run.previous as? TestRun)?.id.appending(queryParameters),
-                                          centerColumn: "\(run.displayName())<br /><small>\(run.failingSuites().count) of \(run.suites.count) failed</small>\(codeCoverageLink)",
-                                          rightColumnLink: (run.next as? TestRun)?.id.appending(queryParameters))
+            htmlPage.div(class: "centered") {
+                if run.hasFailure() {
+                    let errorButtonClass = showErrorsOnly ? "button_selected" : "button_deselected"
+                    htmlPage.button("Only failing", link: "/details/\(run.id)\(queryParametersWithToggledErrors)", class: errorButtonClass)
+                    
+                    let errorDetailsButtonClass = showErrorsDetails ? "button_selected" : "button_deselected"
+                    htmlPage.button("Fail details", link: "/details/\(run.id)\(queryParametersWithToggledErrorsDetails)", class: errorDetailsButtonClass)
+                }
+                
+                if let coverageInfoPath = run.codeCoveragePath,
+                   let coverageInfoData = try? Data(contentsOf: URL(fileURLWithPath: coverageInfoPath)),
+                   let coverageInfo = (try? JSONSerialization.jsonObject(with: coverageInfoData, options: [])) as? [String: Any],
+                   let datas = coverageInfo["data"] as? [[String: Any]],
+                   let totalCoverageInfo = datas.first?["totals"] as? [String: Any],
+                   let totalCoverageLines = totalCoverageInfo["lines"] as? [String: Any],
+                   let totalCoverage = totalCoverageLines["percent"] as? Int {
+                    htmlPage.button("Coverage (\(totalCoverage)%)", link: "/coverage/\(run.id)\(queryParameters)")
+                }
             }
+        }
+        htmlPage.div(id: "header-padding")
+        htmlPage.append(body: """
+                    <script>
+                        $('#header-padding').css('height', $('#header').outerHeight());
+                    </script>
+                """)
+        
+        htmlPage.append(body: """
+            <div class='separator'>
+            <b>\(run.displayName())</b> (\(Int(run.totalDuration()))s)
+            </div>
+            """)
+        
+        for suite in run.suites {
+            let suiteHasFailure = suite.hasFailure()
+            let crashIcon = (suiteHasFailure && suite.hasCrashed()) ? HTMLPage.Icons.crash : ""
+            let divIcon = suiteHasFailure ? HTMLPage.Icons.failure : HTMLPage.Icons.success
             
-            response.appendBody(string: "</h3>")
-            for suite in run.suites {
-                let color = suite.hasFailure() ? "red" : "green"
-                let crash = suite.hasCrashed() ? "🚨 " : ""
-                let suiteHasFailure = suite.hasFailure()
-                if !showErrorsOnly || suiteHasFailure {
-                    response.appendBody(string: "\(crash)<a href='/details/\(run.id)/\(suite.name)\(queryParameters)' style='color:\(color)'>\(suite.name)</a>")
-                    response.appendBody(string: "&nbsp;\(suite.totalDuration().durationString())<br>")
+            if !showErrorsOnly || suiteHasFailure {
+                let divClass = suiteHasFailure ? "failure" : ""
+                
+                htmlPage.div(class: "item \(divClass)") {
+                    htmlPage.append(body: crashIcon)
+                    
+                    htmlPage.button("\(divIcon) \(suite.name) (\(Int(suite.totalDuration()))s)", link: "/details/\(run.id)/\(suite.name)\(queryParameters)")
                     
                     if showErrorsDetails && suiteHasFailure {
                         for failingTest in suite.failingTests() {
                             guard let failedAction = failingTest.firstFailingAction()?.name else {
                                 continue
                             }
-                            response.appendBody(string: "<a style='padding-left: 20px; color:red' href='/details/\(failingTest.parentSuite.parentRun.id)/\(failingTest.parentSuite.name)/\(failingTest.name)\(queryParameters)'>\(failingTest.name)</a><br />")
-                            response.appendBody(string: "<div style='padding-left: 40px; color:SlateGrey'><small>\(failedAction)</small></div><br />")
+                            
+                            let failureDescription = failedAction.unescaped.replacingOccurrences(of: "\n", with: "<br/>")
+                            
+                            htmlPage.newline()
+                            htmlPage.append(body: "<a style='padding-left: 20px; color:red' href='/details/\(failingTest.parentSuite.parentRun.id)/\(failingTest.parentSuite.name)/\(failingTest.name)\(queryParameters)'><small>\(failingTest.name)</small></a>")
+                            htmlPage.newline()
+                            htmlPage.append(body: "<div style='padding-left: 40px; color:SlateGrey'><small>\(failureDescription)</small></div>")
+                            htmlPage.newline()
                         }
                     }
                 }
             }
         }
+        
+        response.appendBody(string: htmlPage.html())
         
         response.completed()
     }

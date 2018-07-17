@@ -34,34 +34,46 @@ extension RouteHandler {
             return
         }
         
+        let paramDict = request.queryParamsDict
+        let queryParameters = paramDict.queryString()
+        
+        let htmlPage = HTMLPage(title: "UI Test Browser - Coverage report")
+        
+        htmlPage.div(id: "header") {
+            htmlPage.div(class: "centered") {
+                htmlPage.button("Home", link: "/\(queryParameters)")
+                htmlPage.append(body: "・&nbsp;")
+                htmlPage.button("Run summary", link: "/details/\(run.id)\(queryParameters)")
+            }
+        }
+        htmlPage.div(id: "header-padding")
+        htmlPage.append(body: """
+                    <script>
+                        $('#header-padding').css('height', $('#header').outerHeight());
+                    </script>
+                """)
+        
         let totalCoverage = run.coverage?.totalCoverage() ?? 0
         let coverageFiles = run.coverage?.fileList() ?? []
         
-        response.wrapDefaultFont() {
-            response.threeColumnsBody(leftColumn: "<a href='/'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)'>\(run.displayName())</a>",
-                                      centerColumn: "&nbsp;",
-                                      rightColumn: "&nbsp;")
-            response.appendBody(string: "<hr /><br />")
+        htmlPage.append(body: """
+            <div class='separator'>
+            <b>\(run.displayName())</b><br/>Total coverage: \(totalCoverage)%
+            </div>
+            """)
 
-            response.appendBody(string: h3("Total coverage: \(totalCoverage)%"))
-            
-            response.appendBody(string: "<table>")
-            for (indx, coverageFile) in coverageFiles.enumerated() {
-                guard let coverageFileB64 = coverageFile.filePath.data(using: .utf8)?.base64EncodedString() else {
-                    continue
-                }
-                let coverageBar: String
-                if coverageFile.coveragePercentage == 0 {
-                    coverageBar = "&nbsp;<div style='float: left; width: 50px; background-color:OrangeRed'>&nbsp;</div>"
-                } else {
-                    coverageBar = "&nbsp;<div style='float: left; width: \(String(describing: Int(Double(coverageFile.coveragePercentage) / 100.0 * 50.0)))px; background-color:PaleGreen'>&nbsp;</div>"
-                }
-                
-                let rowColor = (indx % 2 == 0) ? "Linen" : ""
-                response.appendBody(string: "<tr style='background-color:\(rowColor)'><td>\(coverageBar)\(coverageFile.coveragePercentage)%&nbsp;</td><td><a href='/coverage/\(run.id)/\(coverageFileB64)'>\(coverageFile.shortFilePath)</a></td></tr>")
+        for coverageFile in coverageFiles {
+            guard let coverageFileB64 = coverageFile.filePath.data(using: .utf8)?.base64EncodedString() else {
+                continue
             }
-            response.appendBody(string: "</table>")
+            
+            htmlPage.div(id: "", class: "item step") {
+                htmlPage.inlineBlock("\(coverageFile.coveragePercentage)%", width: 35)
+                htmlPage.button(coverageFile.shortFilePath, link: "/coverage/\(run.id)/\(coverageFileB64)")
+            }
         }
+
+        response.appendBody(string: htmlPage.html())
         
         response.completed()
     }

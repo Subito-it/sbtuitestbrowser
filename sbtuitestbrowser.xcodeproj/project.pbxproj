@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C317F40C20EE30D00038EAD0 /* HTMLPageHead.swift in Sources */ = {isa = PBXBuildFile; fileRef = C317F40B20EE30D00038EAD0 /* HTMLPageHead.swift */; };
+		C317F41020EE328F0038EAD0 /* HTMLPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C317F40F20EE328F0038EAD0 /* HTMLPage.swift */; };
+		C317F41220EE4E720038EAD0 /* HTMLPageIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = C317F41120EE4E720038EAD0 /* HTMLPageIcons.swift */; };
+		C31FDFE920FDDC5700AA5F2D /* String+Escape.swift in Sources */ = {isa = PBXBuildFile; fileRef = C31FDFE720FDDC5100AA5F2D /* String+Escape.swift */; };
 		C342057B20E274350013C0F9 /* AttachmentRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C342057A20E274350013C0F9 /* AttachmentRouteHandler.swift */; };
 		C342057E20E292050013C0F9 /* TestAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C342057D20E292050013C0F9 /* TestAttachment.swift */; };
 		OBJ_403 /* a_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_134 /* a_.c */; };
@@ -365,7 +369,6 @@
 		OBJ_870 /* RunRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_35 /* RunRouteHandler.swift */; };
 		OBJ_871 /* StatusRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_36 /* StatusRouteHandler.swift */; };
 		OBJ_872 /* SuiteRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_37 /* SuiteRouteHandler.swift */; };
-		OBJ_873 /* TestActionRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* TestActionRouteHandler.swift */; };
 		OBJ_874 /* TestRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* TestRouteHandler.swift */; };
 		OBJ_875 /* TestStatsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* TestStatsRouteHandler.swift */; };
 		OBJ_876 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* main.swift */; };
@@ -588,6 +591,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C317F40B20EE30D00038EAD0 /* HTMLPageHead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLPageHead.swift; sourceTree = "<group>"; };
+		C317F40F20EE328F0038EAD0 /* HTMLPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLPage.swift; sourceTree = "<group>"; };
+		C317F41120EE4E720038EAD0 /* HTMLPageIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLPageIcons.swift; sourceTree = "<group>"; };
+		C31FDFE720FDDC5100AA5F2D /* String+Escape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Escape.swift"; sourceTree = "<group>"; };
 		C342057A20E274350013C0F9 /* AttachmentRouteHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentRouteHandler.swift; sourceTree = "<group>"; };
 		C342057D20E292050013C0F9 /* TestAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttachment.swift; sourceTree = "<group>"; };
 		"COpenSSL::COpenSSL::Product" /* COpenSSL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = COpenSSL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -886,7 +893,6 @@
 		OBJ_377 /* Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bytes.swift; sourceTree = "<group>"; };
 		OBJ_378 /* Dir.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dir.swift; sourceTree = "<group>"; };
 		OBJ_379 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		OBJ_38 /* TestActionRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestActionRouteHandler.swift; sourceTree = "<group>"; };
 		OBJ_380 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		OBJ_381 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		OBJ_382 /* PerfectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectError.swift; sourceTree = "<group>"; };
@@ -1058,6 +1064,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C317F40A20EE30AC0038EAD0 /* HTML */ = {
+			isa = PBXGroup;
+			children = (
+				C317F40F20EE328F0038EAD0 /* HTMLPage.swift */,
+				C317F41120EE4E720038EAD0 /* HTMLPageIcons.swift */,
+				C317F40B20EE30D00038EAD0 /* HTMLPageHead.swift */,
+			);
+			path = HTML;
+			sourceTree = "<group>";
+		};
 		OBJ_100 /* PerfectHTTP */ = {
 			isa = PBXGroup;
 			children = (
@@ -1404,7 +1420,6 @@
 				OBJ_35 /* RunRouteHandler.swift */,
 				OBJ_36 /* StatusRouteHandler.swift */,
 				OBJ_37 /* SuiteRouteHandler.swift */,
-				OBJ_38 /* TestActionRouteHandler.swift */,
 				OBJ_39 /* TestRouteHandler.swift */,
 				OBJ_40 /* TestStatsRouteHandler.swift */,
 			);
@@ -1630,6 +1645,7 @@
 				OBJ_18 /* Model */,
 				OBJ_26 /* RouteHandlers */,
 				OBJ_41 /* main.swift */,
+				C317F40A20EE30AC0038EAD0 /* HTML */,
 			);
 			name = sbtuitestbrowser;
 			path = Sources/sbtuitestbrowser;
@@ -1645,6 +1661,7 @@
 				OBJ_14 /* Sequence+QueryString.swift */,
 				OBJ_15 /* String+Shell.swift */,
 				OBJ_16 /* TimeInterval+String.swift */,
+				C31FDFE720FDDC5100AA5F2D /* String+Escape.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1996,6 +2013,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 9999;
+				TargetAttributes = {
+					"COpenSSL::COpenSSL" = {
+						LastSwiftMigration = 1000;
+					};
+				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "sbtuitestbrowser" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2468,6 +2490,7 @@
 			files = (
 				OBJ_847 /* Dictionary+Extension.swift in Sources */,
 				OBJ_848 /* HTTPRequest+Extension.swift in Sources */,
+				C317F40C20EE30D00038EAD0 /* HTMLPageHead.swift in Sources */,
 				OBJ_849 /* HTTPResponse+Extension.swift in Sources */,
 				OBJ_850 /* NSTimeInterval+Extension.swift in Sources */,
 				C342057B20E274350013C0F9 /* AttachmentRouteHandler.swift in Sources */,
@@ -2482,6 +2505,7 @@
 				OBJ_859 /* TestFailure.swift in Sources */,
 				OBJ_860 /* TestRun.swift in Sources */,
 				OBJ_861 /* TestSuite.swift in Sources */,
+				C317F41020EE328F0038EAD0 /* HTMLPage.swift in Sources */,
 				OBJ_862 /* CoverageFileRouteHandler.swift in Sources */,
 				OBJ_863 /* CoverageHomeRouteHandler.swift in Sources */,
 				OBJ_864 /* DiagnosticReportRouteHandler.swift in Sources */,
@@ -2494,8 +2518,9 @@
 				OBJ_870 /* RunRouteHandler.swift in Sources */,
 				OBJ_871 /* StatusRouteHandler.swift in Sources */,
 				OBJ_872 /* SuiteRouteHandler.swift in Sources */,
-				OBJ_873 /* TestActionRouteHandler.swift in Sources */,
+				C317F41220EE4E720038EAD0 /* HTMLPageIcons.swift in Sources */,
 				OBJ_874 /* TestRouteHandler.swift in Sources */,
+				C31FDFE920FDDC5700AA5F2D /* String+Escape.swift in Sources */,
 				OBJ_875 /* TestStatsRouteHandler.swift in Sources */,
 				OBJ_876 /* main.swift in Sources */,
 			);
@@ -2705,7 +2730,8 @@
 		OBJ_400 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEFINES_MODULE = NO;
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2724,6 +2750,8 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGET_NAME = COpenSSL;
 			};
 			name = Debug;
@@ -2731,7 +2759,8 @@
 		OBJ_401 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEFINES_MODULE = NO;
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2750,6 +2779,7 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGET_NAME = COpenSSL;
 			};
 			name = Release;

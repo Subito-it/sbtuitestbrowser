@@ -59,6 +59,8 @@ class TestAction: Hashable, Equatable {
         }
         
         self.failed = self.parentTest.failures.filter({ actionName.contains($0.message) && actionName.contains(":\($0.lineNumber)") && actionName.contains($0.fileName.count > 0 ? $0.fileName : " ") }).count > 0
+        
+        self.parentAction?.add(self)
     }
     
     public func add(_ subAction: TestAction) {

@@ -28,7 +28,7 @@ extension RouteHandler {
         
         let runPlist = request.urlVariables["runplist"] ?? ""
         let coverageFilePathB64 = request.urlVariables["filepath"] ?? ""
-        
+
         guard let run = self.runs.first(where: { $0.id == runPlist }),
               let repoBasePath = run.repoBasePath,
               let commitHash = run.commitHash,
@@ -46,37 +46,53 @@ extension RouteHandler {
             return
         }
         
+        let paramDict = request.queryParamsDict
+        let queryParameters = paramDict.queryString()
+        
+        let htmlPage = HTMLPage(title: "UI Test Browser - Coverage report")
+        
+        htmlPage.div(id: "header") {
+            htmlPage.div(class: "centered") {
+                htmlPage.button("Home", link: "/\(queryParameters)")
+                htmlPage.append(body: "・&nbsp;")
+                htmlPage.button("Run summary", link: "/details/\(run.id)\(queryParameters)")
+            }
+        }
+        htmlPage.div(id: "header-padding")
+        htmlPage.append(body: """
+                    <script>
+                        $('#header-padding').css('height', $('#header').outerHeight());
+                    </script>
+                """)
+        
         let coverageFile = "cd \(repoBasePath); git --no-pager show \(commitHash):\(coverageFilePath)"
         let coverageFileContent = coverageFile.shellExecute()
         let fileContentLines = coverageFileContent.components(separatedBy: "\n")
-
-        response.wrapDefaultFont() {
-            response.threeColumnsBody(leftColumn: "<a href='/'>Home</a><br /><a style='padding-left: 20px;' href='/details/\(run.id)'>\(run.displayName())</a><br /><a style='padding-left: 40px;' href='/coverage/\(run.id)'>coverage</a>",
-                centerColumn: "&nbsp;",
-                rightColumn: "&nbsp;")
-            response.appendBody(string: "<hr />")
-            
-            response.appendBody(string: "<h3>")
-            response.threeColumnsBody(leftColumnLink: nil,
-                                      centerColumn: "\(coverageFilePath)<br/><br/><small>Coverage: \(totalCoverage)%</small>",
-                                      rightColumnLink: nil)
-            response.appendBody(string: "</h3>")
-
-            response.appendBody(string: "<br />")
-            
-            response.appendBody(string: "<div style='font-family: Menlo, Courier;'")
+        
+        htmlPage.append(body: """
+            <div class='separator'>
+            <b>\(run.displayName())</b><br/>Coverage: \(totalCoverage)%
+            </div>
+            """)
+        
+        htmlPage.div(id: "", class: "item code") {
+        
             for (indx, fileContentLine) in fileContentLines.enumerated() {
-                let color = coveredLines.contains(indx) ? "background-color:PaleGreen;" : ""
+                let markerClass = coveredLines.contains(indx) ? "" : "red_fill"
+                let lineClass = coveredLines.contains(indx) ? "gray" : "uncovered_line"
                 var line = fileContentLine.replacingOccurrences(of: " ", with: "&nbsp;")
                 if line.isEmpty {
                     line = "&nbsp;"
                 }
-
-                response.appendBody(string: "<div style='\(color)'>\(line)</div>")
+                
+                htmlPage.inlineBlock("", class: markerClass, width: 5)
+                htmlPage.inlineBlock(line, class: lineClass)
+                htmlPage.newline()
             }
-            response.appendBody(string: "</div>")
         }
 
+        response.appendBody(string: htmlPage.html())
+        
         response.completed()
     }
 }
