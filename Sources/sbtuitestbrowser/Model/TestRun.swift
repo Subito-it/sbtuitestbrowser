@@ -211,7 +211,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
         var plistData: [String: Any] = [:]
         
-        let plistXML = try Data(contentsOf: self.plistURL)
+        let plistXML = try Data(contentsOf: url)
         
         plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String: Any]
         
@@ -225,10 +225,6 @@ class TestRun: ListItem, FailableItem, Equatable {
         } catch let error {
             fatalError("Failed to load dictionary \(self.plistURL) error: \(error)")
         }
-
-        guard extract(formatVersion: dict) == "1.2" else {
-            fatalError("Unsupported format version, expected 1.2")
-        }
         
         self.branchName = dict["BranchName"] as? String
         self.commitHash = dict["CommitHash"] as? String
@@ -238,8 +234,29 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.groupIdentifier = dict["GroupingIdentifier"] as? String
         self.repoBasePath = dict["RepoPath"] as? String
         
-        let deviceName = extractSimulatorName(from: dict)
-        let deviceId = extractSimulatorId(from: dict)
+        let simulatorInfoDict: [String : Any]
+        switch extract(formatVersion: dict) {
+        case "1.1":
+            do {
+                let dict = try read(plist: self.plistURL.deletingLastPathComponent().appendingPathComponent("Info.plist"))
+                guard let actionsDict = dict["Actions"] as? [[String : Any]],
+                      let firstActionDict = actionsDict.first else {
+                    fatalError("Failed to load Info.plist dictionary, invalid structure")
+                }
+                
+                simulatorInfoDict = firstActionDict
+            } catch let error {
+                fatalError("Failed to load Info.plist dictionary. error: \(error)")
+            }
+
+        case "1.2":
+            simulatorInfoDict = dict
+        default:
+            fatalError("Unsupported format version, expected 1.2 or 1.1")
+        }
+        
+        let deviceName = extractSimulatorName(from: simulatorInfoDict)
+        let deviceId = extractSimulatorId(from: simulatorInfoDict)
         let testsDict = extractTestableSummaries(from: dict)
         
         let runSuites = suites(from: testsDict).map {
@@ -261,7 +278,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
             let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
             
-            let findCmd = "find \"\(url.path)\" -name *.crash"
+            let findCmd = "find \"\(url.path)\" -name *.crash 2>/dev/null"
             let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).compactMap { URL(fileURLWithPath: $0) }
             
             let diagnosticReports = diagnosticReportUrls.map { (url: $0, timeInterval: self.diagnosticReportTimeInterval(at: $0), path: self.diagnosticReportPath(at: $0)) }

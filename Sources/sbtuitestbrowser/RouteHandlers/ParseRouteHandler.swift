@@ -53,7 +53,7 @@ extension RouteHandler {
         parsingStart = CFAbsoluteTimeGetCurrent()
         parsingProgress = 0.0
         
-        var plists = plistFiles(baseFolderURL, matchSuffix: "_TestSummaries.plist")
+        var plists = plistFiles(baseFolderURL, name: "TestSummaries.plist")
         
         plists = plists.filter({ plist in
             if self.groupedPlists.contains(plist) {
@@ -149,12 +149,12 @@ extension RouteHandler {
         }
     }
     
-    private func plistFiles(_ baseURL: URL?, matchSuffix: String) -> [URL] {
+    private func plistFiles(_ baseURL: URL?, name: String) -> [URL] {
         guard let baseURL = baseURL else {
             return []
         }
         
-        let findPlistsCmd = "find \"\(baseURL.path)\" -type d \\( -name DataStore -o -name ModuleCache -o -name Build -o -name Attachments \\) -prune -o -print | grep -e '_TestSummaries.plist$'"
+        let findPlistsCmd = "find \"\(baseURL.path)\" -type d \\( -name DataStore -o -name ModuleCache -o -name Build -o -name Attachments \\) -prune -o -print | grep -e '/\(name)'"
         var plistToProcess = findPlistsCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).compactMap { URL(fileURLWithPath: $0) }
 
         plistToProcess.sort { ( u1: URL, u2: URL) -> Bool in
