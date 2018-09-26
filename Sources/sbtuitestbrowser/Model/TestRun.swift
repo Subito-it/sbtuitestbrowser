@@ -262,7 +262,7 @@ class TestRun: ListItem, FailableItem, Equatable {
             let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
             
             let findCmd = "find \"\(url.path)\" -name *.crash"
-            let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).flatMap { URL(fileURLWithPath: $0) }
+            let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).compactMap { URL(fileURLWithPath: $0) }
             
             let diagnosticReports = diagnosticReportUrls.map { (url: $0, timeInterval: self.diagnosticReportTimeInterval(at: $0), path: self.diagnosticReportPath(at: $0)) }
             
