@@ -21,7 +21,17 @@ import Foundation
 class TestRun: ListItem, FailableItem, Equatable {
     let plistURL: URL
     let attachmentBasePath: String
-    var id: String { return plistURL.lastPathComponent }
+    var id: String {
+        var hasher = Hasher()
+        hasher.combine(plistURL.absoluteString)
+        let hashValue = hasher.finalize()
+
+        if hashValue < 0 {
+            return String(describing: UInt(hashValue - Int.min))
+        } else {
+            return String(describing: hashValue)
+        }
+    }
     var groupIdentifier: String?
     var branchName: String?
     var commitHash: String?
