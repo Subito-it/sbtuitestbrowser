@@ -96,6 +96,10 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
         return actions(from: rawActions, parentAction: nil, parentTest: self)
     }
     
+    static func resetActionCache() {
+        _ = "rm -rf /tmp/sbtuitestbrowser".shellExecute()
+    }
+    
     // MARK: - Private
     
     private static func temporaryFolder(parentSuite: TestSuite) -> URL {

@@ -47,9 +47,7 @@ extension RouteHandler {
         guard parsingProgress == 1.0 else {
             return
         }
-        
-        _ = "rm -rf /tmp/sbtuitestbrowser".shellExecute()
-                
+                        
         parsingStart = CFAbsoluteTimeGetCurrent()
         parsingProgress = 0.0
         
@@ -60,11 +58,6 @@ extension RouteHandler {
                 return false
             }
             
-            for run in runs {
-                if run.plistURL == plist {
-                    return false
-                }
-            }
             return true
         })
         
@@ -114,7 +107,7 @@ extension RouteHandler {
                             }
                             
                             runsToDelete += runsDroppingFirst
-                            runsToDelete.forEach { self.groupedPlists.insert($0.plistURL) }
+                            groupableRuns.forEach { self.groupedPlists.insert($0.plistURL) }
                         }
                     }
                     

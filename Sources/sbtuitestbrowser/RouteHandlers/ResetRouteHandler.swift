@@ -22,6 +22,8 @@ import PerfectHTTP
 extension RouteHandler {
     
     public func resetHandler(request: HTTPRequest, _ response: HTTPResponse) {
+        Test.resetActionCache()
+
         self.runs = []
         self.groupedPlists = Set<URL>()
         parseAll()

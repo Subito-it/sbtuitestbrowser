@@ -22,7 +22,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
 
-let version = "1.0.0"
+let version = "1.0.1"
 
 var baseFolderURL: URL?
 
@@ -35,6 +35,7 @@ guard let baseFolderURL = baseFolderURL else {
     exit(-1)
 }
 
+Test.resetActionCache()
 
 // Create server object.
 let server = HTTPServer()
