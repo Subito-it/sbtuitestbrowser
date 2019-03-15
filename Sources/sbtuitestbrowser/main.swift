@@ -22,6 +22,8 @@ import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
 
+let version = "1.0.0"
+
 var baseFolderURL: URL?
 
 for argument in CommandLine.arguments.dropFirst() {
@@ -29,7 +31,7 @@ for argument in CommandLine.arguments.dropFirst() {
     baseFolderURL = URL(fileURLWithPath: path)
 }
 guard let baseFolderURL = baseFolderURL else {
-    print("Missing basefolder")
+    print("sbtuitestbrowser \(version)\n\nMissing basefolder!")
     exit(-1)
 }
 
