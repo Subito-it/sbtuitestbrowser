@@ -81,13 +81,13 @@ extension RouteHandler {
             let r = TestRun.parse(plists: plists, attachmentBaseURL: baseFolderURL) {
                 partialResult, progress in
                 
-                self.runSyncQueue.async { [weak self] in
+                self.runSyncQueue.sync { [weak self] in
                     self?.runs.append(partialResult)
                     self?.parsingProgress = progress
                 }
             }
             
-            self.runSyncQueue.async { [weak self] in
+            self.runSyncQueue.sync { [weak self] in
                 guard let `self` = self else {
                     return
                 }

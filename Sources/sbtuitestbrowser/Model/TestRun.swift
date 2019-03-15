@@ -69,7 +69,7 @@ class TestRun: ListItem, FailableItem, Equatable {
             autoreleasepool {
                 let run = TestRun(plistURL: obj as! URL, attachmentBaseURL: attachmentBaseURL)
                 
-                synchQueue.async {
+                synchQueue.sync {
                     runs.append(run)
                     partialRun(run, Double(runs.count) / Double(plists.count))
                 }
