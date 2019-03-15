@@ -5,8 +5,16 @@ If you're [running UI Tests using xcodebuild](https://developer.apple.com/librar
 
 sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple web interface to help visualize errors faster (some say even better than Xcode).
 
-# Cloning
-To get source code ready for Xcode you'll need to compile Swift's package dependencies first
+# Installation
+
+```
+brew install Subito-it/made/sbtuitestbrowser
+```
+
+Then see [usage](#usage).
+
+Alternatively you can build manually using swift build.
+
 ```
 git clone https://github.com/Subito-it/sbtuitestbrowser.git
 cd sbtuitesttunnel
