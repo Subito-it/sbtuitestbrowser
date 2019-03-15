@@ -7,11 +7,15 @@ sbtuitestbrowser parses xcodebuild's logs for you presenting them in a simple we
 
 # Installation
 
+### Using homebrew
+
 ```
 brew install Subito-it/made/sbtuitestbrowser
 ```
 
 Then see [usage](#usage).
+
+### From sources
 
 Alternatively you can build manually using swift build.
 
@@ -33,6 +37,19 @@ This starts a web server reachable at [http://localhost:8090](http://localhost:8
 
 ## Parsing results
 When launched the tool will parse all the test session found inside the _basepath_ specified at launch. As your tests sessions get executed and complete you can force the new results to be parsed by making a `GET` request to [http://localhost:8090/parse](http://localhost:8090/parse)
+
+## Current version
+
+You can request the current running version by making a `GET` request to [http://localhost:8090/version](http://localhost:8090/version).
+
+## Status
+
+You can request the current status (_ready_/_parsing_) by making a `GET` request to [http://localhost:8090/status](http://localhost:8090/status).
+
+## Test case stats
+
+You can request the average and last execution time of a test case by making a `GET` request to [http://localhost:8090/teststats?id=testsuite/testcase](http://localhost:8090/teststats?id=testsuite/testcase).
+
 
 ## Merging results
 There are scenarios (e.g. when running ui tests in parallarel over multiple machines) where you want different results to be merged together. When parsing all the TestSummaries.plist sbtuitestbrowser will look and group by the `GroupingIdentifier` key, presenting results as it was a single test session.
