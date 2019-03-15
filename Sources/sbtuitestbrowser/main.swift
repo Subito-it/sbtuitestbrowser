@@ -22,7 +22,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
 
-let version = "1.0.1"
+let version = "1.0.2"
 
 var baseFolderURL: URL?
 
@@ -48,6 +48,7 @@ routeHandler.parseAll()
 
 routes.add(method: .get, uri: "/", handler: routeHandler.homeHandler)
 routes.add(method: .get, uri: "/reset", handler: routeHandler.resetHandler)
+routes.add(method: .get, uri: "/version", handler: routeHandler.versionHandler)
 routes.add(method: .get, uri: "/teststats", handler: routeHandler.testStatsHandler)
 routes.add(method: .get, uri: "/status", handler: routeHandler.statusHandler)
 routes.add(method: .get, uri: "/results", handler: routeHandler.resultsHandler)
