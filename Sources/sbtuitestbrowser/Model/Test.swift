@@ -127,10 +127,13 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     
     // MARK: - Protocols
     
-    var hashValue: Int { return "\(parentSuite.name)-\(name)".hashValue }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(parentSuite.name)
+        hasher.combine(name)
+    }
     
     static func ==(lhs: Test, rhs: Test) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        return lhs.name == rhs.name && lhs.parentSuite.name == rhs.parentSuite.name
     }
     
     func hasFailure() -> Bool {

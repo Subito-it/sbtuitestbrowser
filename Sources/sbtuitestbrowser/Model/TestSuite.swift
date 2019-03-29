@@ -90,10 +90,12 @@ class TestSuite: ListItem, FailableItem, Hashable, Equatable {
     
     // MARK: - Protocols
     
-    var hashValue: Int { return name.hashValue }
-    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
+        
     static func ==(lhs: TestSuite, rhs: TestSuite) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        return lhs.name == rhs.name
     }
     
     func hasFailure() -> Bool {

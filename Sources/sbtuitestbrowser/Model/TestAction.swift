@@ -81,9 +81,11 @@ class TestAction: Hashable, Equatable {
     
     // MARK: - Protocols
     
-    var hashValue: Int { return uuid.hashValue }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(uuid)
+    }
     
     static func ==(lhs: TestAction, rhs: TestAction) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        return lhs.uuid == rhs.uuid
     }
 }
