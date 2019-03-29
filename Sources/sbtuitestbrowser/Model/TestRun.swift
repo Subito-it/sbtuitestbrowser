@@ -239,10 +239,12 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.branchName = dict["BranchName"] as? String
         self.commitHash = dict["CommitHash"] as? String
         self.commitMessage = dict["CommitMessage"] as? String
-        self.codeCoveragePath = dict["CodeCoverageFile"] as? String
         self.customDescrition = dict["CustomDescription"] as? String
         self.groupIdentifier = dict["GroupingIdentifier"] as? String
         self.repoBasePath = dict["RepoPath"] as? String
+        if let coveragePath = dict["CodeCoverageFile"] as? String {
+            self.codeCoveragePath = self.plistURL.deletingLastPathComponent().appendingPathComponent(coveragePath).standardized.path
+        }
         
         let simulatorInfoDict: [String : Any]
         switch extract(formatVersion: dict) {
