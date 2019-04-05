@@ -59,7 +59,7 @@ extension RouteHandler {
                     let screenshotButtonClass = inlineScreenshots ? "button_selected" : "button_deselected"
                     htmlPage.button("Inline screenshots", link: "/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)", class: screenshotButtonClass)
                 }
-                if test.hasCrashed() {
+                if test.diagnosticReportUrl != nil {
                     htmlPage.button("Diagnostic report", link: "/diagnostic_report/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)")
                 }
             }
@@ -239,24 +239,24 @@ extension RouteHandler {
                                 htmlPage.inlineBlock(HTMLPage.Icons.attachment)
                             }
                             
-                            if inlineScreenshots {
-                                switch attachment.type {
-                                case .image:
+                            switch attachment.type {
+                            case .image:
+                                if inlineScreenshots {
                                     htmlPage.newline()
                                     if !attachment.isAutomaticScreenshot {
                                         htmlPage.inlineBlock(attachment.title, class: "bold")
                                         htmlPage.newline()
                                     }
-                                    
+                                                                        
                                     htmlPage.inlineBlock("<a href='/static64/\(attachment.base64())'><img style='padding-top: 10px; width: 25%' src='/static64/\(attachment.base64())' /></a>")
-                                case .crashlog, .text:
-                                    htmlPage.inlineBlock("<a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.base64())'>\(attachment.title)</b></a>", class: "red bold")
-                                case .plist, .other:
-                                    htmlPage.inlineBlock("<a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.base64())'>\(attachment.title)</a>", class: "red bold")
+                                    
+                                    htmlPage.newline()
+                                    htmlPage.newline()
                                 }
-                                
-                                htmlPage.newline()
-                                htmlPage.newline()
+                            case .crashlog, .text:
+                                htmlPage.inlineBlock("<a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.base64())'>\(attachment.title)</b></a>", class: "red bold")
+                            case .plist, .other:
+                                htmlPage.inlineBlock("<a href='/attachment/\(run.id)/\(suiteName)/\(test.name)/\(targetActionUuid)/\(attachment.base64())'>\(attachment.title)</a>", class: "red bold")
                             }
                         }
                     }
