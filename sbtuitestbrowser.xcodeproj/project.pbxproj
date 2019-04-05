@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C3F0FEC0225788E600CC45A7 /* FileReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F0FEBF225788E600CC45A7 /* FileReader.swift */; };
 		OBJ_415 /* a_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_139 /* a_.c */; };
 		OBJ_416 /* aes_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_140 /* aes_.c */; };
 		OBJ_417 /* ameth_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_141 /* ameth_lib.c */; };
@@ -593,6 +594,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C3F0FEBF225788E600CC45A7 /* FileReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileReader.swift; sourceTree = "<group>"; };
 		"COpenSSL::COpenSSL::Product" /* COpenSSL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = COpenSSL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
 		OBJ_100 /* inflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
@@ -1071,6 +1073,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C3F0FEBE225788CB00CC45A7 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				C3F0FEBF225788E600CC45A7 /* FileReader.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
 		OBJ_104 /* PerfectHTTP 3.2.4 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1645,6 +1655,7 @@
 		OBJ_8 /* sbtuitestbrowser */ = {
 			isa = PBXGroup;
 			children = (
+				C3F0FEBE225788CB00CC45A7 /* Support */,
 				OBJ_9 /* Extensions */,
 				OBJ_18 /* HTML */,
 				OBJ_22 /* HTMLHelpers.swift */,
@@ -2536,6 +2547,7 @@
 				OBJ_881 /* CoverageFileRouteHandler.swift in Sources */,
 				OBJ_882 /* CoverageHomeRouteHandler.swift in Sources */,
 				OBJ_883 /* DiagnosticReportRouteHandler.swift in Sources */,
+				C3F0FEC0225788E600CC45A7 /* FileReader.swift in Sources */,
 				OBJ_884 /* HomeRouteHandler.swift in Sources */,
 				OBJ_885 /* ParseRouteHandler.swift in Sources */,
 				OBJ_886 /* ResetRouteHandler.swift in Sources */,

@@ -39,6 +39,8 @@ class TestRun: ListItem, FailableItem, Equatable {
     var customDescrition: String?
     var codeCoveragePath: String?
     var repoBasePath: String?
+    var standardOutPath: String?
+    var standardOutSequences: [(timestamp: TimeInterval, offsetStart: Int, offsetEnd: Int)] = []
     
     static var diagnosticReportDateFormatter: DateFormatter {
         let d = DateFormatter()
@@ -245,6 +247,9 @@ class TestRun: ListItem, FailableItem, Equatable {
         if let coveragePath = dict["CodeCoverageFile"] as? String {
             self.codeCoveragePath = self.plistURL.deletingLastPathComponent().appendingPathComponent(coveragePath).standardized.path
         }
+        if let standardOutPath = dict["StandardOutputAndStandardErrorFile"] as? String {
+            self.standardOutPath = self.plistURL.deletingLastPathComponent().appendingPathComponent(standardOutPath).standardized.path
+        }
         
         let simulatorInfoDict: [String : Any]
         switch extract(formatVersion: dict) {
@@ -260,7 +265,6 @@ class TestRun: ListItem, FailableItem, Equatable {
             } catch let error {
                 fatalError("Failed to load Info.plist dictionary. error: \(error)")
             }
-
         case "1.2":
             simulatorInfoDict = dict
         default:
@@ -308,6 +312,35 @@ class TestRun: ListItem, FailableItem, Equatable {
                     }
                 }
             }
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS "
+        
+        if let path = standardOutPath,
+            let fileReader = try? FileReader(path: path) {
+
+            var lastTimestamp: TimeInterval = 0
+            var lastStartOffset = 0
+            while let line = fileReader.nextLine() {
+                if let datePrefix = line.text?.prefix(4),
+                   let dateInt = Int(datePrefix),
+                   dateInt >= 2019, dateInt <= 2030,
+                   let dateSubstring = line.text?.prefix(24),
+                   let date = dateFormatter.date(from: String(dateSubstring)) {
+                    
+                    let currentTimestamp = date.timeIntervalSinceReferenceDate
+                    if currentTimestamp > 0 {
+                        if lastTimestamp > 0 {
+                            standardOutSequences.append((timestamp: lastTimestamp, offsetStart: lastStartOffset, offsetEnd: line.startOffset - 1))
+                        }
+                        lastTimestamp = currentTimestamp
+                        lastStartOffset = line.startOffset
+                    }
+                }
+            }
+            
+            standardOutSequences.append((timestamp: lastTimestamp, offsetStart: lastStartOffset, offsetEnd: fileReader.size))
         }
     }
     
