@@ -40,6 +40,10 @@ class TestRun: ListItem, FailableItem, Equatable {
     var codeCoveragePath: String?
     var repoBasePath: String?
     var standardOutPath: String?
+    lazy var standardOutPathFileReader: FileReader? = {
+        guard let standardOutPath = standardOutPath else { return nil }
+        return try? FileReader(path: standardOutPath)
+    }()
     var standardOutSequences: [(timestamp: TimeInterval, offsetStart: Int, offsetEnd: Int)] = []
     
     static var diagnosticReportDateFormatter: DateFormatter {
@@ -217,6 +221,16 @@ class TestRun: ListItem, FailableItem, Equatable {
         return suites.reduce([Test]()) { $0 + $1.failingTests() }
     }
     
+    public func standardOutput(from startTimeInterval: TimeInterval, to stopTimeInterval: TimeInterval) -> String {
+        guard stopTimeInterval > startTimeInterval else { return "" }
+        
+        let sequences = standardOutSequences.filter { $0.timestamp >= startTimeInterval && $0.timestamp < stopTimeInterval }
+        
+        guard sequences.count > 0 else { return "" }
+        
+        return standardOutPathFileReader?.string(starting: sequences.first!.offsetStart, ending: sequences.last!.offsetEnd) ?? ""
+    }
+    
     // MARK: - Private
     
     private func read(plist url: URL) throws -> [String : Any] {
@@ -317,9 +331,7 @@ class TestRun: ListItem, FailableItem, Equatable {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS "
         
-        if let path = standardOutPath,
-            let fileReader = try? FileReader(path: path) {
-
+        if let fileReader = standardOutPathFileReader {
             var lastTimestamp: TimeInterval = 0
             var lastStartOffset = 0
             while let line = fileReader.nextLine() {

@@ -26,13 +26,15 @@ extension RouteHandler {
         let suiteName = request.urlVariables["suitename"] ?? ""
         let testName = request.urlVariables["testname"] ?? ""
         let inlineScreenshots = request.paramBoolValue(name: "screenshots")
+        let inlineStandardOutput = request.paramBoolValue(name: "standardoutput")
         let targetActionUuid = request.urlVariables["actionuuid"] ?? ""
         
         let paramDict = request.queryParamsDict
         let queryParameters = paramDict.queryString()
         
         let queryParametersWithToggledScreenshots = paramDict.toggle(key: "screenshots").queryString()
-
+        let queryParametersWithToggledStandardOutput = paramDict.toggle(key: "standardoutput").queryString()
+        
         guard let run = self.runs.first(where: { $0.id == runPlist }),
             let suite = run.suites.first(where: { $0.name == suiteName }),
             let test = suite.test(named: testName) else {
@@ -58,6 +60,10 @@ extension RouteHandler {
                 if test.hasScreenshots() {
                     let screenshotButtonClass = inlineScreenshots ? "button_selected" : "button_deselected"
                     htmlPage.button("Inline screenshots", link: "/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)", class: screenshotButtonClass)
+                }
+                if test.parentSuite.parentRun.standardOutPath != nil {
+                    let standardOutputButtonClass = inlineStandardOutput ? "button_selected" : "button_deselected"
+                    htmlPage.button("Inline app standard output", link: "/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledStandardOutput)", class: standardOutputButtonClass)
                 }
                 if test.diagnosticReportUrl != nil {
                     htmlPage.button("Diagnostic report", link: "/diagnostic_report/\(run.id)/\(suite.name)/\(test.name)\(queryParameters)")
@@ -198,7 +204,7 @@ extension RouteHandler {
         
         let hasActions = testActions.count > 0
         if hasActions {
-            for action in testActions {
+            for (actionIndx, action) in testActions.enumerated() {
                 if action.parentAction == nil {
                     lastParentAction = nil
                     paddingLeft = 0
@@ -206,7 +212,7 @@ extension RouteHandler {
                     lastParentAction = action.parentAction
                     paddingLeft += 20
                 }
-
+                
                 let currentTimeString = String(format: "%.2f", currentTime) + "s&nbsp;"
                 currentTime += action.duration
                 
@@ -225,6 +231,18 @@ extension RouteHandler {
                     }
                     
                     htmlPage.inlineBlock("\(action.name) \(durationString)", class: action.failed ? "red bold" : "")
+                    
+                    if inlineStandardOutput {
+                        let startTimeInterval = action.startTimeinterval
+                        let stopTimeInterval = testActions[safe: actionIndx + 1]?.startTimeinterval ?? startTimeInterval
+                        let standardOutput = run.standardOutput(from: startTimeInterval, to: stopTimeInterval).replacingOccurrences(of: "\n", with: "<br/>")
+                        if standardOutput.count > 0 {
+                            htmlPage.newline()
+                            htmlPage.div(id: "", class: "code gray") {
+                                htmlPage.inlineBlock(standardOutput)
+                            }
+                        }
+                    }
                     
                     if let attachments = action.attachments, attachments.count > 0 {
                         for attachment in attachments {
