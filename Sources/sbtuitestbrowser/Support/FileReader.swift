@@ -52,7 +52,8 @@ class FileReader {
 
         let count: Int = fread(buffer, 1, size, handle)
         if ferror(handle) == 0, count > 0 {
-            return String((0..<count).map { Character(UnicodeScalar(buffer[$0])) })
+            let data = Data(bytes: buffer, count: size)
+            return String(data: data, encoding: String.Encoding.utf8) ?? ""
         }
         
         return ""
