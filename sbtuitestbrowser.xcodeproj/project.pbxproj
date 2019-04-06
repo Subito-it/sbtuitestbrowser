@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C33DEF6A2257C5CB0063B82A /* Collection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33DEF692257C5CB0063B82A /* Collection+Extension.swift */; };
 		C3F0FEC0225788E600CC45A7 /* FileReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F0FEBF225788E600CC45A7 /* FileReader.swift */; };
 		OBJ_415 /* a_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_139 /* a_.c */; };
 		OBJ_416 /* aes_.c in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_140 /* aes_.c */; };
@@ -594,6 +595,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C33DEF692257C5CB0063B82A /* Collection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extension.swift"; sourceTree = "<group>"; };
 		C3F0FEBF225788E600CC45A7 /* FileReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileReader.swift; sourceTree = "<group>"; };
 		"COpenSSL::COpenSSL::Product" /* COpenSSL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = COpenSSL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
@@ -1702,6 +1704,7 @@
 				OBJ_15 /* String+Escape.swift */,
 				OBJ_16 /* String+Shell.swift */,
 				OBJ_17 /* TimeInterval+String.swift */,
+				C33DEF692257C5CB0063B82A /* Collection+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2534,6 +2537,7 @@
 				OBJ_868 /* HTMLPage.swift in Sources */,
 				OBJ_869 /* HTMLPageHead.swift in Sources */,
 				OBJ_870 /* HTMLPageIcons.swift in Sources */,
+				C33DEF6A2257C5CB0063B82A /* Collection+Extension.swift in Sources */,
 				OBJ_871 /* HTMLHelpers.swift in Sources */,
 				OBJ_872 /* Model.swift in Sources */,
 				OBJ_873 /* Test.swift in Sources */,
