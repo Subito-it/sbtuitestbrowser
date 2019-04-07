@@ -14,8 +14,9 @@ class FileReader {
     
     typealias Line = (text: String?, startOffset: Int, endOffset: Int)
     
-    init(path: String, initialOffset: Int = 0) throws {
-        guard let handle = fopen(path, "r") else {
+    init(path: String?, initialOffset: Int = 0) throws {
+        guard let path = path
+            , let handle = fopen(path, "r") else {
             throw NSError(domain: "FilePathNotFound", code: 404, userInfo: nil)
         }
         
