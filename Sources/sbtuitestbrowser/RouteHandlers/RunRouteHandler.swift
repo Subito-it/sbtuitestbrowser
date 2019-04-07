@@ -96,7 +96,7 @@ extension RouteHandler {
                                 continue
                             }
                             
-                            let failureDescription = failedAction.unescaped.replacingOccurrences(of: "\n", with: "<br/>")
+                            let failureDescription = failedAction.unescaped()
                             
                             htmlPage.newline()
                             htmlPage.append(body: "<a style='padding-left: 20px; color:red' href='/details/\(failingTest.parentSuite.parentRun.id)/\(failingTest.parentSuite.name)/\(failingTest.name)\(queryParameters)'><small>\(failingTest.name)</small></a>")

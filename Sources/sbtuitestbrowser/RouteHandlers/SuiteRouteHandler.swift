@@ -98,7 +98,7 @@ extension RouteHandler {
                     
                     if showErrorsDetails && testHasFailure,
                         let failedAction = test.firstFailingAction()?.name {
-                        let failureDescription = failedAction.unescaped.replacingOccurrences(of: "\n", with: "<br/>")
+                        let failureDescription = failedAction.unescaped()
                         htmlPage.append(body: "<div style='padding-left: 20px; color:SlateGrey'><small>\(failureDescription)</small></div><br />")
                     }
                 }
