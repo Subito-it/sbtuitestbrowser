@@ -61,7 +61,7 @@ extension RouteHandler {
                     let screenshotButtonClass = inlineScreenshots ? "button_selected" : "button_deselected"
                     htmlPage.button("Inline screenshots", link: "/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledScreenshots)", class: screenshotButtonClass)
                 }
-                if test.parentSuite.parentRun.standardOutPath != nil {
+                if test.standardOutPath != nil {
                     let standardOutputButtonClass = inlineStandardOutput ? "button_selected" : "button_deselected"
                     htmlPage.button("Inline app standard output", link: "/details/\(run.id)/\(suite.name)/\(test.name)\(queryParametersWithToggledStandardOutput)", class: standardOutputButtonClass)
                 }
@@ -204,6 +204,8 @@ extension RouteHandler {
         
         let hasActions = testActions.count > 0
         if hasActions {
+            let fileReader = try? FileReader(path: test.standardOutPath)
+            
             for (actionIndx, action) in testActions.enumerated() {
                 if action.parentAction == nil {
                     lastParentAction = nil
@@ -235,7 +237,7 @@ extension RouteHandler {
                     if inlineStandardOutput {
                         let startTimeInterval = action.startTimeinterval
                         let stopTimeInterval = testActions[safe: actionIndx + 1]?.startTimeinterval ?? startTimeInterval
-                        let standardOutput = run.standardOutput(from: startTimeInterval, to: stopTimeInterval).replacingOccurrences(of: "\n", with: "<br/>")
+                        let standardOutput = test.standardOutput(fileReader: fileReader, from: startTimeInterval, to: stopTimeInterval).encodeUsingHtmlEntities()
                         if standardOutput.count > 0 {
                             htmlPage.newline()
                             htmlPage.div(id: "", class: "code gray") {

@@ -27,6 +27,8 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
     let failures: [TestFailure]
     var diagnosticReportUrl: URL?
     let attachmentBasePath: String
+    var standardOutPath: String?
+    var standardOutSequences: [(timestamp: TimeInterval, offsetStart: Int, offsetEnd: Int)] = []
     
     private let actionsDataUrl: URL?
     
@@ -94,6 +96,19 @@ class Test: ListItem, FailableItem, Hashable, Equatable {
         }
         
         return actions(from: rawActions, parentAction: nil, parentTest: self)
+    }
+    
+    public func standardOutput(fileReader: FileReader?, from startTimeInterval: TimeInterval, to stopTimeInterval: TimeInterval) -> String {
+        guard let fileReader = fileReader
+            , stopTimeInterval > startTimeInterval else {
+                return ""
+        }
+
+        let sequences = standardOutSequences.filter { $0.timestamp >= startTimeInterval && $0.timestamp < stopTimeInterval }
+
+        guard sequences.count > 0 else { return "" }
+
+        return fileReader.string(starting: sequences.first!.offsetStart, ending: sequences.last!.offsetEnd)
     }
     
     static func resetActionCache() {

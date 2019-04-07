@@ -39,12 +39,6 @@ class TestRun: ListItem, FailableItem, Equatable {
     var customDescrition: String?
     var codeCoveragePath: String?
     var repoBasePath: String?
-    var standardOutPath: String?
-    lazy var standardOutPathFileReader: FileReader? = {
-        guard let standardOutPath = standardOutPath else { return nil }
-        return try? FileReader(path: standardOutPath)
-    }()
-    var standardOutSequences: [(timestamp: TimeInterval, offsetStart: Int, offsetEnd: Int)] = []
     
     static var diagnosticReportDateFormatter: DateFormatter {
         let d = DateFormatter()
@@ -220,17 +214,7 @@ class TestRun: ListItem, FailableItem, Equatable {
     public func failingTests() -> [Test] {
         return suites.reduce([Test]()) { $0 + $1.failingTests() }
     }
-    
-    public func standardOutput(from startTimeInterval: TimeInterval, to stopTimeInterval: TimeInterval) -> String {
-        guard stopTimeInterval > startTimeInterval else { return "" }
         
-        let sequences = standardOutSequences.filter { $0.timestamp >= startTimeInterval && $0.timestamp < stopTimeInterval }
-        
-        guard sequences.count > 0 else { return "" }
-        
-        return standardOutPathFileReader?.string(starting: sequences.first!.offsetStart, ending: sequences.last!.offsetEnd) ?? ""
-    }
-    
     // MARK: - Private
     
     private func read(plist url: URL) throws -> [String : Any] {
@@ -260,9 +244,6 @@ class TestRun: ListItem, FailableItem, Equatable {
         self.repoBasePath = dict["RepoPath"] as? String
         if let coveragePath = dict["CodeCoverageFile"] as? String {
             self.codeCoveragePath = self.plistURL.deletingLastPathComponent().appendingPathComponent(coveragePath).standardized.path
-        }
-        if let standardOutPath = dict["StandardOutputAndStandardErrorFile"] as? String {
-            self.standardOutPath = self.plistURL.deletingLastPathComponent().appendingPathComponent(standardOutPath).standardized.path
         }
         
         let simulatorInfoDict: [String : Any]
@@ -331,28 +312,39 @@ class TestRun: ListItem, FailableItem, Equatable {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS "
         
-        if let fileReader = standardOutPathFileReader {
-            var lastTimestamp: TimeInterval = 0
-            var lastStartOffset = 0
-            while let line = fileReader.nextLine() {
-                if let datePrefix = line.text?.prefix(4),
-                   let dateInt = Int(datePrefix),
-                   dateInt >= 2019, dateInt <= 2030,
-                   let dateSubstring = line.text?.prefix(24),
-                   let date = dateFormatter.date(from: String(dateSubstring)) {
-                    
-                    let currentTimestamp = date.timeIntervalSinceReferenceDate
-                    if currentTimestamp > 0 {
-                        if lastTimestamp > 0 {
-                            standardOutSequences.append((timestamp: lastTimestamp, offsetStart: lastStartOffset, offsetEnd: line.startOffset - 1))
+        if let relativeStandardOutPath = dict["StandardOutputAndStandardErrorFile"] as? String {
+            let standardOutPath = self.plistURL.deletingLastPathComponent().appendingPathComponent(relativeStandardOutPath).standardized.path
+            
+            if let fileReader = try? FileReader(path: standardOutPath) {
+                var fullStandardOutSequences = [(timestamp: TimeInterval, offsetStart: Int, offsetEnd: Int)]()
+                
+                var lastTimestamp: TimeInterval = 0
+                var lastStartOffset = 0
+                while let line = fileReader.nextLine() {
+                    if let datePrefix = line.text?.prefix(4),
+                        let dateInt = Int(datePrefix),
+                        dateInt >= 2019, dateInt <= 2030,
+                        let dateSubstring = line.text?.prefix(24),
+                        let date = dateFormatter.date(from: String(dateSubstring)) {
+                        
+                        let currentTimestamp = date.timeIntervalSinceReferenceDate
+                        if currentTimestamp > 0 {
+                            if lastTimestamp > 0 {
+                                fullStandardOutSequences.append((timestamp: lastTimestamp, offsetStart: lastStartOffset, offsetEnd: line.startOffset - 1))
+                            }
+                            lastTimestamp = currentTimestamp
+                            lastStartOffset = line.startOffset
                         }
-                        lastTimestamp = currentTimestamp
-                        lastStartOffset = line.startOffset
                     }
                 }
+                
+                fullStandardOutSequences.append((timestamp: lastTimestamp, offsetStart: lastStartOffset, offsetEnd: fileReader.size))
+                
+                for test in allTests() {
+                    test.standardOutPath = standardOutPath
+                    test.standardOutSequences = fullStandardOutSequences.filter { $0.timestamp >= test.startTimeinterval && $0.timestamp < test.stopTimeinterval }
+                }
             }
-            
-            standardOutSequences.append((timestamp: lastTimestamp, offsetStart: lastStartOffset, offsetEnd: fileReader.size))
         }
     }
     
