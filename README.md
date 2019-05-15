@@ -15,6 +15,8 @@ brew install Subito-it/made/sbtuitestbrowser
 
 Then see [usage](#usage).
 
+sbtuitestbrowser is written in Swift 5, so if you're on macOS Mojave 10.14.3 or earlier, you may need to install an optional Swift library package that can be downloaded from "More Downloads" for Apple Developers at https://developer.apple.com/download/more/
+
 ### From sources
 
 Alternatively you can build manually using swift build.
