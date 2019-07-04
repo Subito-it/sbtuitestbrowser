@@ -200,7 +200,7 @@ extension RouteHandler {
         var paddingLeft = 0
         var currentTime: TimeInterval = 0.0
         
-        let firstAttachment = testActions.lazy.compactMap { self.automaticScreenshot(for: $0, in: testActions) }.first
+        let firstAttachment = testActions.lazy.compactMap { self.screenshot(for: $0, in: testActions) }.first
         
         let hasActions = testActions.count > 0
         if hasActions {
@@ -221,7 +221,7 @@ extension RouteHandler {
                 let durationString = action.duration >= 0.01 ? "(\(String(format: "%.2f", action.duration))s)" : ""
                 
                 htmlPage.div(id: "", class: "item step") {
-                    if let attachment = self.automaticScreenshot(for: action, in: testActions), firstAttachment != nil {
+                    if let attachment = self.screenshot(for: action, in: testActions), firstAttachment != nil {
                         htmlPage.inlineBlock("<a href='/static64/\(attachment.base64())'></a>", class: "hidden screenshot")
                     }
                     
@@ -298,11 +298,11 @@ extension RouteHandler {
         response.completed()
     }
     
-    private func automaticScreenshot(for selectedAction: TestAction, in testActions: [TestAction]) -> TestAttachment? {
+    private func screenshot(for selectedAction: TestAction, in testActions: [TestAction]) -> TestAttachment? {
         var screenshot: TestAttachment? = nil
         
         for action in testActions {
-            if let actionScreenshot = action.attachments?.compactMap({ $0 }).first(where: { $0.type == .image && $0.isAutomaticScreenshot }) {
+            if let actionScreenshot = action.attachments?.compactMap({ $0 }).first(where: { $0.type == .image }) {
                screenshot = actionScreenshot
             }
             
