@@ -289,10 +289,14 @@ class TestRun: ListItem, FailableItem, Equatable {
         if let diagnosticReportPaths = dict["DiagnosticReports"] as? String {
             let url = self.plistURL.deletingLastPathComponent().appendingPathComponent(diagnosticReportPaths).standardized
             
-            let findCmd = "find \"\(url.path)\" -name *.crash 2>/dev/null"
+            let findCmd = "find \"\(url.path)\" -name \"*.crash\" 2>/dev/null"
             let diagnosticReportUrls = findCmd.shellExecute().components(separatedBy: "\n").filter({ !$0.isEmpty }).compactMap { URL(fileURLWithPath: $0) }
             
-            let diagnosticReports = diagnosticReportUrls.map { (url: $0, timeInterval: self.diagnosticReportTimeInterval(at: $0), path: self.diagnosticReportPath(at: $0)) }
+            var diagnosticReports = [(url: URL, timeInterval: TimeInterval, path: String)]()
+            for url in diagnosticReportUrls {
+                let lines = diagnosticReportContentLines(url: url)
+                diagnosticReports.append((url: url, timeInterval: diagnosticReportTimeInterval(in: lines), path: diagnosticReportPath(in: lines)))
+            }
             
             // Try to match diagnostic reports
             for test in self.allTests() {
@@ -347,14 +351,17 @@ class TestRun: ListItem, FailableItem, Equatable {
             }
         }
     }
-    
-    private func diagnosticReportTimeInterval(at url: URL) -> TimeInterval {
+
+    private func diagnosticReportContentLines(url: URL) -> [Substring] {
         guard let report = try? String(contentsOf: url, encoding: .utf8) else {
-            return 0
+            return []
         }
         
+        return report.split(separator: "\n")
+    }
+
+    private func diagnosticReportTimeInterval(in lines: [Substring]) -> TimeInterval {
         let dateMarker = "Date/Time:"
-        let lines = report.split(separator: "\n")
         let dateLine = lines.first(where: { $0.contains(dateMarker) })
         if let dateString = dateLine?.replacingOccurrences(of: dateMarker, with: "").trimmingCharacters(in: .whitespacesAndNewlines),
             let date = TestRun.diagnosticReportDateFormatter.date(from: dateString) {
@@ -366,14 +373,8 @@ class TestRun: ListItem, FailableItem, Equatable {
         return 0
     }
     
-    private func diagnosticReportPath(at url: URL) -> String {
-        guard let report = try? String(contentsOf: url, encoding: .utf8) else {
-            return ""
-        }
-        
+    private func diagnosticReportPath(in lines: [Substring]) -> String {
         let pathMarker = "Path:"
-        let lines = report.split(separator: "\n")
-        
         return String(lines.first(where: { $0.contains(pathMarker) }) ?? "")
     }
     
