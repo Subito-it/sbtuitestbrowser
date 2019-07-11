@@ -22,7 +22,7 @@ import PerfectHTTP
 import PerfectHTTPServer
 import Foundation
 
-let version = "1.1.0"
+let version = "1.1.1"
 
 var baseFolderURL: URL?
 
