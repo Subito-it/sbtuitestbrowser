@@ -54,7 +54,7 @@ extension RouteHandler {
         var plists = plistFiles(baseFolderURL, name: "TestSummaries.plist")
         
         plists = plists.filter({ plist in
-            if self.groupedPlists.contains(plist) {
+            if self.parsedPlists.contains(plist) {
                 return false
             }
             

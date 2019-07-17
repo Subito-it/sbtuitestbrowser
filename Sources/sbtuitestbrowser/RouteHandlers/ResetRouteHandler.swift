@@ -25,7 +25,7 @@ extension RouteHandler {
         Test.resetActionCache()
 
         self.runs = []
-        self.groupedPlists = Set<URL>()
+        self.parsedPlists = Set<URL>()
         parseAll()
         
         response.status = .movedPermanently

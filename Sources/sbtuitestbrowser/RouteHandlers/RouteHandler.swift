@@ -22,7 +22,7 @@ import PerfectHTTP
 class RouteHandler {
     var baseFolderURL: URL?
     var runs = [TestRun]()
-    var groupedPlists = Set<URL>()
+    var parsedPlists = Set<URL>()
     var parsingProgress: Double = 1.0
     var parsingStart: TimeInterval = 0.0
     
