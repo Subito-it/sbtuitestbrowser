@@ -112,6 +112,7 @@ extension RouteHandler {
                     }
                     
                     self.runs = self.runs.filter { !runsToDelete.map({ $0.plistURL }).contains($0.plistURL) }
+                    self.runs = self.runs.filter { $0.totalTests(errorsOnly: false) > 0 }
                 }
                 
                 self.runs.sort(by: { lhs, rhs in lhs.startTimeInterval() > rhs.startTimeInterval() })
