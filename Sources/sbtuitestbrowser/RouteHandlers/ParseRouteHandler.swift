@@ -107,8 +107,8 @@ extension RouteHandler {
                             }
                             
                             runsToDelete += runsDroppingFirst
-                            groupableRuns.forEach { self.groupedPlists.insert($0.plistURL) }
                         }
+                        groupableRuns.forEach { self.groupedPlists.insert($0.plistURL) }
                     }
                     
                     self.runs = self.runs.filter { !runsToDelete.map({ $0.plistURL }).contains($0.plistURL) }
